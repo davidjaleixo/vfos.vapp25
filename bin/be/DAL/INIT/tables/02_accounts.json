@@ -2,21 +2,21 @@
     "columns":[
        {
           "allow_null":false,
-          "default":"userdummy",
+          "default":"username",
           "name":"userName",
           "size":100,
           "type":"varchar"
        },
        {
           "allow_null":false,
-          "default":"userdummy",
+          "default":"hash",
           "name":"userHash",
           "size":100,
           "type":"varchar"
        },
        {
           "allow_null":false,
-          "default":"userdummy",
+          "default":"salt",
           "name":"userSalt",
           "size":100,
           "type":"varchar"

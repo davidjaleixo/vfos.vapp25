@@ -1,0 +1,71 @@
+{
+    "columns": [
+        {
+            "allow_null": false,
+            "default": "listdescription",
+            "name": "description",
+            "size": 100,
+            "type": "varchar"
+        },
+        {
+            "allow_null": false,
+            "name": "qtd",
+            "type": "integer"
+        },
+        {
+            "name": "idList",
+            "type": "serial"
+        },
+        {
+            "name": "idPars",
+            "type": "serial"
+        },
+        {
+            "name": "idMaterials",
+            "type": "serial"
+        }
+    ],
+    "constraints": [
+        {
+            "foreign_key":{
+                "columns":[
+                   "idPars"
+                ],
+                "name":"fk_idPars",
+                "on_delete":"CASCADE",
+                "on_update":"CASCADE",
+                "referenced_columns":[
+                   "idPars"
+                ],
+                "referenced_table_name":"pars"
+             },
+             "foreign_key":{
+                "columns":[
+                   "idMaterials"
+                ],
+                "name":"fk_idMaterials",
+                "on_delete":"CASCADE",
+                "on_update":"CASCADE",
+                "referenced_columns":[
+                   "idMaterials"
+                ],
+                "referenced_table_name":"materials"
+             },
+             "primary_key": {
+                "columns": [
+                    "idList"
+                ],
+                "name": "pk_idList",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE"
+            },
+            "unique": {
+                "columns": [
+                    "idList"
+                ],
+                "name": "unique_idList"
+            }
+        }
+    ],
+    "table_name": "list"
+}

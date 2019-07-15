@@ -2,14 +2,14 @@
     "columns":[
        {
           "allow_null":false,
-          "default":"userdummy",
+          "default":"projectname",
           "name":"name",
           "size":100,
           "type":"varchar"
        },
        {
           "allow_null":false,
-          "default":"userdummy",
+          "default":"projectdescription",
           "name":"description",
           "size":100,
           "type":"varchar"

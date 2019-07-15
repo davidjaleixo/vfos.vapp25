@@ -14,51 +14,23 @@
          "type": "serial"
       },
       {
-         "name": "idAccounts",
+         "name": "idPars",
          "type": "serial"
-      },
-      {
-         "name": "idSlumptests",
-         "type": "serial"
-      },
-      {
-         "allow_null": true,
-         "default": "none",
-         "name": "type",
-         "size": 50,
-         "type": "varchar"
-      },
-      {
-         "allow_null": true,
-         "name": "predictedvalue",
-         "type": "integer"
       }
    ],
    "constraints": [
       {
          "foreign_key": {
             "columns": [
-               "idAccounts"
+               "idPars"
             ],
-            "name": "fk_idAccounts",
+            "name": "fk_idPars",
             "on_delete": "CASCADE",
             "on_update": "CASCADE",
             "referenced_columns": [
-               "idAccounts"
+               "idPars"
             ],
-            "referenced_table_name": "accounts"
-         },
-         "foreign_key": {
-            "columns": [
-               "idSlumptests"
-            ],
-            "name": "fk_idSlumptests",
-            "on_delete": "CASCADE",
-            "on_update": "CASCADE",
-            "referenced_columns": [
-               "idSlumptests"
-            ],
-            "referenced_table_name": "slumptests"
+            "referenced_table_name": "pars"
          },
          "primary_key": {
             "columns": [
@@ -76,5 +48,5 @@
          }
       }
    ],
-   "table_name": "notifications"
+   "table_name": "notifpv"
 }

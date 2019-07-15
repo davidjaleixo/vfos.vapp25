@@ -1,0 +1,55 @@
+{
+    "columns": [
+        {
+            "allow_null": false,
+            "name": "status",
+            "type": "integer"
+        },
+        {
+            "allow_null": false,
+            "default": "statusdescription",
+            "name": "statusdescription",
+            "size": 100,
+            "type": "varchar"
+        },
+        {
+            "name": "idPars",
+            "type": "serial"
+        },
+        {
+            "name": "idProjects",
+            "type": "serial"
+        }
+    ],
+    "constraints": [
+        {
+            "foreign_key":{
+                "columns":[
+                   "idProjects"
+                ],
+                "name":"fk_idProjects",
+                "on_delete":"CASCADE",
+                "on_update":"CASCADE",
+                "referenced_columns":[
+                   "idProjects"
+                ],
+                "referenced_table_name":"projects"
+             },
+             "primary_key": {
+                "columns": [
+                    "idPars"
+                ],
+                "name": "pk_idPars",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE"
+            },
+            "unique": {
+                "columns": [
+                    "idPars"
+                ],
+                "name": "unique_idPars"
+            }
+        }
+    ],
+    "table_name": "pars"
+}

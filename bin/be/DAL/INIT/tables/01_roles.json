@@ -2,14 +2,14 @@
     "columns":[
        {
           "allow_null":false,
-          "default":"userdummy",
+          "default":"accounttype",
           "name":"accountType",
           "size":100,
           "type":"varchar"
        },
        {
           "allow_null":false,
-          "default":"userdummy",
+          "default":"accountdescription",
           "name":"description",
           "size":100,
           "type":"varchar"

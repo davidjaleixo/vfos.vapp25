@@ -1,0 +1,55 @@
+{
+    "columns": [
+        {
+            "allow_null": false,
+            "name": "status",
+            "type": "integer"
+        },
+        {
+            "allow_null": true,
+            "default": "statusdescription",
+            "name": "statusdescription",
+            "size": 100,
+            "type": "varchar"
+        },
+        {
+            "name": "idRmes",
+            "type": "serial"
+        },
+        {
+            "name": "idPars",
+            "type": "serial"
+        }
+    ],
+    "constraints": [
+        {
+            "foreign_key":{
+                "columns":[
+                   "idPars"
+                ],
+                "name":"fk_idPars",
+                "on_delete":"CASCADE",
+                "on_update":"CASCADE",
+                "referenced_columns":[
+                   "idPars"
+                ],
+                "referenced_table_name":"pars"
+             },
+             "primary_key": {
+                "columns": [
+                    "idRmes"
+                ],
+                "name": "pk_idRmes",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE"
+            },
+            "unique": {
+                "columns": [
+                    "idRmes"
+                ],
+                "name": "unique_idRmes"
+            }
+        }
+    ],
+    "table_name": "rmes"
+}

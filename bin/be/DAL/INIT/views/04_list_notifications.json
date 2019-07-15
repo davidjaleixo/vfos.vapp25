@@ -1,4 +1,0 @@
-{
-    "view_definition_query":"select noti.read, noti.date, noti.idnotification, noti.idaccounts, noti.idslumptests, slt.value, slt.idprojects, supp.idsuppliers, supp.name as suppliername, comp.idcompositions, comp.name as compositionname, comp.tholdmax, comp.tholdmin, prj.name as projectname, noti.type, noti.predictedvalue from consulgal.notifications as noti left join consulgal.slumptests as slt on slt.idslumptests = noti.idslumptests left join consulgal.projects as prj on prj.idprojects = slt.idprojects left join consulgal.suppliers as supp on supp.idsuppliers = slt.idsuppliers left join consulgal.compositions as comp on comp.idcompositions = slt.idcompositions",
-    "view_name":"list_notifications"
-}

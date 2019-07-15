@@ -1,0 +1,34 @@
+{
+    "columns": [
+        {
+            "name": "idMaterials",
+            "type": "serial"
+        },
+        {
+            "allow_null": false,
+            "default": "projectname",
+            "name": "name",
+            "size": 100,
+            "type": "varchar"
+        }
+    ],
+    "constraints": [
+        {
+            "primary_key": {
+                "columns": [
+                    "idMaterials"
+                ],
+                "name": "pk_idMaterials",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE"
+            },
+            "unique": {
+                "columns": [
+                    "idMaterials"
+                ],
+                "name": "idMaterials"
+            }
+        }
+    ],
+    "table_name": "materials"
+}
