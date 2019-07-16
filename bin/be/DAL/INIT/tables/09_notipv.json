@@ -10,7 +10,11 @@
          "type": "TIMESTAMP"
       },
       {
-         "name": "idNotification",
+         "name": "idAccounts",
+         "type": "serial"
+      },
+      {
+         "name": "idNotipv",
          "type": "serial"
       },
       {
@@ -20,6 +24,18 @@
    ],
    "constraints": [
       {
+         "foreign_key": {
+            "columns": [
+               "idAccounts"
+            ],
+            "name": "fk_idAccounts",
+            "on_delete": "CASCADE",
+            "on_update": "CASCADE",
+            "referenced_columns": [
+               "idAccounts"
+            ],
+            "referenced_table_name": "accounts"
+         },
          "foreign_key": {
             "columns": [
                "idPars"
@@ -34,19 +50,19 @@
          },
          "primary_key": {
             "columns": [
-               "idNotification"
+               "idNotipv"
             ],
-            "name": "pk_idNotification",
+            "name": "pk_idNotipv",
             "on_delete": "CASCADE",
             "on_update": "CASCADE"
          },
          "unique": {
             "columns": [
-               "idNotification"
+               "idNotipv"
             ],
-            "name": "idNotification"
+            "name": "idNotipv"
          }
       }
    ],
-   "table_name": "notifpv"
+   "table_name": "notipv"
 }

@@ -1,0 +1,4 @@
+{
+    "view_definition_query":"select noti.read, noti.date, noti.idNotipv, noti.idaccounts, prj.name as projectname, pars.status as parsstatus, pars.statusdescription as parsstatusdescription, rmes.idrmes, rmes.status as rmestatus, rmes.statusdescription as rmesstatusdescription from consulgal.notipv as noti left join consulgal.pars as pars on noti.idpars = pars.idpars left join consulgal.projects as prj on prj.idprojects = pars.idprojects left join consulgal.rmes as rmes on rmes.idpars = pars.idpars",
+    "view_name":"list_notipv"
+}
