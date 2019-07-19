@@ -74,7 +74,7 @@ module.exports = {
                         j = lenj - 1;
                     } else {
                         if (j == lenj - 1) {
-                            let answer = syncstorage('POST', '/views', require('.' + config.files.db.views + '/0' + (i + 1) + '_' + views[i] + '.json'));
+                            let answer = syncstorage('POST', '/views', require('.' + config.files.db.views + '/' + (i + 1) + '_' + views[i] + '.json'));
                             
                             if (answer.statusCode == 201) {
                                 console.log(views[i], "Created");
@@ -95,7 +95,7 @@ module.exports = {
         } else {
             //create all views
             for (var i = 0, len = views.length; i < len; i++) {
-                let answer = syncstorage('POST', '/views', require('.' + config.files.db.views + '/0' + (i + 1) + '_' + views[i] + '.json'));
+                let answer = syncstorage('POST', '/views', require('.' + config.files.db.views + '/' + (i + 1) + '_' + views[i] + '.json'));
                 if (answer.statusCode == 201) {
                     console.log(views[i], "Created");
                 } else {
@@ -127,7 +127,7 @@ module.exports = {
                         j = lenj - 1;
                     } else {
                         if (j == lenj - 1) {
-                            let answer = syncstorage('POST', '/tables', require('.' + config.files.db.tables + '/0' + (i + 1) + '_' + tables[i] + '.json'));
+                            let answer = syncstorage('POST', '/tables', require('.' + config.files.db.tables + '/' + (i + 1) + '_' + tables[i] + '.json'));
                             if (answer.statusCode == 201) {
                                 console.log(tables[i], "Created");
                             } else {
@@ -146,7 +146,7 @@ module.exports = {
             }
         } else {
             for (var i = 0, len = tables.length; i < len; i++) {
-                let answer = syncstorage('POST', '/tables', require('.' + config.files.db.tables + '/0' + (i + 1) + '_' + tables[i] + '.json'));
+                let answer = syncstorage('POST', '/tables', require('.' + config.files.db.tables + '/' + (i + 1) + '_' + tables[i] + '.json'));
                 if (answer.statusCode == 201) {
                     console.log(tables[i], "Created");
                 } else {
@@ -230,17 +230,6 @@ module.exports = {
         })
     },
     createTables: function (cb) {
-
-        // let initTables =
-        //     [
-        //         require('./INIT/tables/01_roles.json'),
-        //         require('./INIT/tables/02_accounts.json'),
-        //         require('./INIT/tables/03_projects.json'),
-        //         require('./INIT/tables/04_users.json'),
-        //         require('./INIT/tables/05_equipments.json'),
-        //         require('./INIT/tables/06_slumps.json'),
-        //         require('./INIT/tables/07_notifications.json')
-        //     ]
 
 
         //TABLES
