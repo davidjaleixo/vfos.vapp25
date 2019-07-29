@@ -34,7 +34,7 @@
     "sync-request": "^6.1.0"
   },
   "scripts": {
-    "boot": "npm install && cd views/app24 && npm i && ng build --prod --aot --deploy-url=\"/davidapp/\" --base-href=\"/davidapp/\" ",
+    "boot": "npm install && cd views/app24 && npm i && ng build --prod --aot --deploy-url=\"/productvalidation/\" --base-href=\"/productvalidation/\" ",
     "start-be": "PORT=4201 node ./bin/be/index.js",
     "start": "concurrently --kill-others \"npm run start-be\""
   },
