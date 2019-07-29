@@ -115,7 +115,7 @@ function init() {
   console.log("Checking DB...")
   dal.init.dbExists(function (exists) {
     if (exists) {
-      console.log("OK")
+      console.log("DB is created!")
       console.log("Checking tables...")
       dal.init.tablesExistsAndCreates(function (tablesdone) {
         if (tablesdone) {

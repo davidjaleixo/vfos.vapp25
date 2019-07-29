@@ -1,0 +1,6 @@
+{
+    "view_definition_query":"select list.idlist, list.idpars, pars.status as parsstatus, pars.statusdescription as parsstatusdescription, pars.idprojects, list.idmaterials, materials.name, list.qtd as itemqtd, list.description, received.qtd as receivedqtd, received.idrme, rmes.status as rmesstatus, rmes.statusdescription as rmesstatusdescription from consulgal.list as list left join consulgal.pars as pars on list.idpars = pars.idpars left join consulgal.materials as materials on materials.idmaterials = list.idmaterials left join consulgal.received as received on received.idlist = list.idlist left join consulgal.rmes as rmes on rmes.idrmes = received.idrme",
+    "view_name":"materials_received"
+ }
+
+ 

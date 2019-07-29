@@ -1,0 +1,287 @@
+<section>
+  <div class="container" style="padding-top: 25px;">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/home/landing">Home</a></li>
+        <li class="breadcrumb-item"><a routerLink="/home/projects">Projects</a></li>
+        <li class="breadcrumb-item active " *ngIf="project">{{project.name}}</li>
+      </ol>
+    </nav>
+
+    <div class="rows">
+      <!--Slump card-->
+      <div class="card border-vfos mb-5 " style="width: 20rem;">
+        <img class="card-img-top" src="assets/img/materials.jpg" alt="products image">
+        <div class="card-body">
+          <h5 class="card-title">Product validation</h5>
+          <p class="card-text">Manage purchases and track their reception in the construction site.</p>
+          <!--a href="#" class="btn btn-primary">New</a-->
+          <!-- <button *ngIf="user.role==1||user.role==2" data-toggle="modal" data-target="#slumpTestModal"
+            class="btn btn-primary center-block">New</button> -->
+          <a *ngIf="user.role==1||user.role==2" href="#" data-toggle="modal" data-target="#newparmodal"
+            class="card-link">New PAR</a>
+          <a *ngIf="user.role==1||user.role==2" href="#" data-toggle="modal" data-target="#newrmemodal"
+            class="card-link">New RME</a>
+          <a *ngIf="user.role==1||user.role==2" class="card-link" routerLink="dashboard" href="#">Dashboard</a>
+          <a *ngIf="user.role==2" class="card-link" routerLink="slumphistory" href="#">History</a>
+
+        </div>
+      </div>
+    </div>
+    <!--End Slump card-->
+
+
+  </div>
+</section>
+<!--MODAL-->
+<div class="modal fade center" id="slumpTestModal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- loading spinner start -->
+      <ngx-spinner [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+        <p class="loading">Loading prediction</p>
+      </ngx-spinner>
+      <!-- loading spinner ends -->
+
+
+    </div>
+  </div>
+</div>
+
+<!-- NEW RME MODAL START -->
+<div class="modal fade center" id="newrmemodal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">New Reception of Materials and Equipment Request</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <!-- loading spinner start -->
+      <!-- <ngx-spinner [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+          <p class="loading">Loading prediction</p>
+        </ngx-spinner> -->
+      <!-- loading spinner ends -->
+      <div class="modal-body">
+        <div class="container-fluid">
+          <form [formGroup]="newRme">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="parnumber">PAR</span>
+                  </div>
+                  <select class="custom-select" formControlName="parnumber" id="parnumber"
+                    [ngClass]="{ 'is-invalid': submitted && frme.parnumber.errors }"
+                    (ngModelChange)="onParSelectChange($event)">
+                    <option disabled selected value> Select the PAR number </option>
+                    <option required [ngValue]="avpar" *ngFor="let avpar of pars">
+                      {{avpar.idpars}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="cold-md-12">
+                <!-- table itemsList -->
+
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>
+                        #
+                      </th>
+                      <th>
+                        Name
+                      </th>
+                      <th>
+                        Qtd
+                      </th>
+                      <th>Qtd to receive</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let paritem of parslist; let index = index">
+
+
+                      <td>{{ paritem.idlist }}</td>
+                      <td>{{ paritem.description }}</td>
+                      <td>{{ paritem.qtd }}</td>
+
+                      <td>
+                        <input type="number" min="0" inputmode="numeric" pattern="[0-9]*" class="form-control"
+                          placeholder="Item quantity" class="form-control" aria-label="Text input with checkbox" [(ngModel)]="receivingList[index]" [ngModelOptions]="{standalone: true}">
+                      </td>
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+
+
+
+
+
+
+
+
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button (click)="createRME()" class="btn btn-vfos"><i class="fa fa-save"></i> Create</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- NEW RME MODAL END -->
+
+
+<!-- NEW PAR MODAL -->
+<div class="modal fade center" id="newparmodal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">New Product Acquisition Request</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <!-- loading spinner start -->
+      <!-- <ngx-spinner [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+        <p class="loading">Loading prediction</p>
+      </ngx-spinner> -->
+      <!-- loading spinner ends -->
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- new material add -->
+            <div class="col-md-6 col-sm-12">
+              <div class="card mb-3">
+                <div class="card-header">
+                  New Item
+                </div>
+                <div class="card-body">
+                  <form [formGroup]="newItem">
+                    <div class="alert alert-danger" *ngIf="materials.length == 0">
+                      Please register a new material type in project settings.
+                    </div>
+
+
+                    <div class="input-group  mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="newitemname">Name</span>
+                      </div>
+                      <input required type="text" class="form-control" formControlName="name" placeholder="Item name"
+                        [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                    </div>
+                    <!-- error form warning start -->
+                    <div *ngIf="submitted && f.name.invalid" class="invalid-feedback">
+                      <div *ngIf="f.name.errors.required">Name is required</div>
+                    </div>
+                    <!-- error form warning end -->
+                    <div class="input-group  mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="newitemqtd">Qtd</span>
+                      </div>
+                      <input required type="number" min="0" inputmode="numeric" pattern="[0-9]*" class="form-control"
+                        formControlName="qtd" placeholder="Item quantity"
+                        [ngClass]="{ 'is-invalid': submitted && f.qtd.errors }">
+                    </div>
+                    <!-- error form warning start -->
+                    <div *ngIf="submitted && f.qtd.invalid" class="invalid-feedback">
+                      <div *ngIf="f.qtd.errors.required">Quantity is required</div>
+                    </div>
+                    <!-- error form warning end -->
+
+                    <!-- <label for="itemmaterial">Type</label> -->
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="newitemtype">Type</span>
+                      </div>
+                      <select class="custom-select" formControlName="itemmaterial" id="newitemtype"
+                        [ngClass]="{ 'is-invalid': submitted && f.itemmaterial.errors }">
+                        <option disabled selected value> Select the material type </option>
+                        <option required [ngValue]="avmaterial" *ngFor="let avmaterial of materials">
+                          {{avmaterial.name}}</option>
+                      </select>
+                    </div>
+
+
+                    <!-- error form warning start -->
+                    <div *ngIf="submitted && f.itemmaterial.invalid" class="invalid-feedback">
+                      <div *ngIf="f.itemmaterial.errors.required">Material type is required</div>
+                    </div>
+                    <!-- error form warning end -->
+                  </form>
+                </div>
+                <div class="card-footer">
+                  <button (click)="addItem()" class="btn btn-vfos float-right"><i class="fa fa-plus"></i> Add</button>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+            <!-- list of materials for this par -->
+            <div class="col-md-6 col-sm-12">
+              <!-- table itemsList -->
+              <table class="table table-striped" [mfData]="itemsList" #mf="mfDataTable" [mfRowsOnPage]="5">
+                <thead>
+                  <tr>
+                    <th>
+                      <mfDefaultSorter by="description">Name</mfDefaultSorter>
+                    </th>
+                    <th>
+                      <mfDefaultSorter by="qtd">Qtd</mfDefaultSorter>
+                    </th>
+                    <th>
+                      <mfDefaultSorter by="itemmaterial">Type</mfDefaultSorter>
+                    </th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of mf.data">
+
+
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.qtd }}</td>
+                    <td>{{ item.itemmaterial.name }}</td>
+
+                    <td>
+                      <button class="btn btn-sm btn-danger" (click)="delItem(item.id)"><i class="fa fa-trash-o"
+                          aria-hidden="true"></i></button>
+                    </td>
+
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan=6>
+                      <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25]"></mfBootstrapPaginator>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button (click)="createPAR()" class="btn btn-vfos"><i class="fa fa-save"></i> Create</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- NEW PAR MODAL END -->

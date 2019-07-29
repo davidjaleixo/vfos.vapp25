@@ -33,6 +33,20 @@ router.route('/items').post(ctl.items.create);
 router.route('/items').patch(ctl.items.update);
 router.route('/items').delete(ctl.items.delete);
 
+//rmes
+router.route('/rmes').get(ctl.rmes.get);
+router.route('/rmes').post(ctl.rmes.create);
+router.route('/rmes').patch(ctl.rmes.update);
+router.route('/rmes').delete(ctl.rmes.delete);
+
+//received
+router.route('/receiveds').get(ctl.received.get);
+router.route('/receiveds').delete(ctl.received.delete);
+router.route('/receiveds').post(ctl.received.create);
+
+//materialsreceived
+router.route('/materialsreceived').get(ctl.materialsreceived.get);
+
 //users
 router.route('/users').get(ctl.users.get);
 router.route('/users').post(ctl.users.create);

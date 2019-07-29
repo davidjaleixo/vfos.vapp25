@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import url('../node_modules/bootstrap/dist/css/bootstrap.css');
-@import url('../node_modules/bootstrap4-toggle/css/bootstrap4-toggle.css');
+@import url('../node_modules/bootstrap4-toggle/css/bootstrap4-toggle.min.css');
 
 /*custom*/
 

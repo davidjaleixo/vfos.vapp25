@@ -1,6 +1,15 @@
 var dal = require('../DAL');
 
 module.exports = {
+    itemCanBeDelete: function (req, res, next) {
+        dal.items.getById(req.query.id, function (err, items) {
+            if (!err) {
+
+            } else {
+
+            }
+        })
+    },
     get: function (req, res) {
         if (req.query.par) {
             dal.items.getByPar(req.query.par, function (err, answer) {

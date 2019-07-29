@@ -1,0 +1,64 @@
+{
+    "columns": [
+        {
+            "name": "idReceived",
+            "type": "serial"
+        },
+        {
+            "name": "idList",
+            "type": "serial"
+        },
+        {
+            "name": "idRme",
+            "type": "serial"
+        },
+        {
+            "allow_null": false,
+            "name": "qtd",
+            "type": "integer"
+        }
+    ],
+    "constraints": [
+        {
+            "foreign_key":{
+                "columns":[
+                   "idList"
+                ],
+                "name":"fk_idList",
+                "on_delete":"CASCADE",
+                "on_update":"CASCADE",
+                "referenced_columns":[
+                   "idList"
+                ],
+                "referenced_table_name":"lis"
+             },
+             "foreign_key":{
+                "columns":[
+                   "idRme"
+                ],
+                "name":"fk_idRme",
+                "on_delete":"CASCADE",
+                "on_update":"CASCADE",
+                "referenced_columns":[
+                   "idRmes"
+                ],
+                "referenced_table_name":"rmes"
+             },
+             "primary_key": {
+                "columns": [
+                    "idReceived"
+                ],
+                "name": "pk_idReceived",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE"
+            },
+            "unique": {
+                "columns": [
+                    "idReceived"
+                ],
+                "name": "unique_idReceived"
+            }
+        }
+    ],
+    "table_name": "received"
+}

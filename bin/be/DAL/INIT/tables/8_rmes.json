@@ -15,27 +15,11 @@
         {
             "name": "idRmes",
             "type": "serial"
-        },
-        {
-            "name": "idPars",
-            "type": "serial"
         }
     ],
     "constraints": [
         {
-            "foreign_key":{
-                "columns":[
-                   "idPars"
-                ],
-                "name":"fk_idPars",
-                "on_delete":"CASCADE",
-                "on_update":"CASCADE",
-                "referenced_columns":[
-                   "idPars"
-                ],
-                "referenced_table_name":"pars"
-             },
-             "primary_key": {
+            "primary_key": {
                 "columns": [
                     "idRmes"
                 ],

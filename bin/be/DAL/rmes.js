@@ -37,13 +37,22 @@ module.exports = {
             }
         })
     },
-    create: function (parsId, status, statusdescription, cb) {
-        storage('POST', "/tables/rmes/rows", [{ idPars: parsId, status: status, statusdescription: statusdescription }], function (error, response, body) {
+    create: function (status, statusdescription, cb) {
+        storage('POST', "/tables/rmes/rows", [{ status: status, statusdescription: statusdescription }], function (error, response, body) {
             if (!error) {
                 cb(false, { message: "Rme is created" })
             } else {
                 cb(true, "Relational Storage Component not responding");
             }
         })
-    }
+    },
+    getNewlyCreated: function (cb) {
+        storage('GET', "/tables/rmes/rows?filter=status=0 ", {}, function (err, response, body) {
+            if (!err) {
+                cb(false, JSON.parse(body).list_of_rows[JSON.parse(body).list_of_rows.length - 1])
+            } else {
+                cb(false, "Relational Storage Component not responding");
+            }
+        })
+    },
 }

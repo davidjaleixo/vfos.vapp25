@@ -26,7 +26,7 @@
     "@ngx-loading-bar/http-client": "^4.2.0",
     "angular-6-datatable": "^0.8.0",
     "bootstrap": "^4.3.1",
-    "bootstrap4-toggle": "^3.4.0",
+    "bootstrap4-toggle": "^3.5.0",
     "chart.js": "^2.8.0",
     "core-js": "^2.5.4",
     "glyphicons": "^0.2.0",

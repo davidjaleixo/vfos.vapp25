@@ -42,6 +42,7 @@ module.exports = {
                     dal.projects.getByName(req.body.name, function (err2, answer2) {
                         
                         if (!err2) {
+                            console.log("project created: ", answer);
                             console.log("answer 2: ", answer2)
                             console.log("user ", req.user);
                             //define the allocation

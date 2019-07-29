@@ -27,31 +27,31 @@
     ],
     "constraints": [
         {
-            "foreign_key":{
-                "columns":[
-                   "idPars"
+            "foreign_key": {
+                "columns": [
+                    "idPars"
                 ],
-                "name":"fk_idPars",
-                "on_delete":"CASCADE",
-                "on_update":"CASCADE",
-                "referenced_columns":[
-                   "idPars"
+                "name": "fk_idPars",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE",
+                "referenced_columns": [
+                    "idPars"
                 ],
-                "referenced_table_name":"pars"
-             },
-             "foreign_key":{
-                "columns":[
-                   "idMaterials"
+                "referenced_table_name": "pars"
+            },
+            "foreign_key": {
+                "columns": [
+                    "idMaterials"
                 ],
-                "name":"fk_idMaterials",
-                "on_delete":"CASCADE",
-                "on_update":"CASCADE",
-                "referenced_columns":[
-                   "idMaterials"
+                "name": "fk_idMaterials",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE",
+                "referenced_columns": [
+                    "idMaterials"
                 ],
-                "referenced_table_name":"materials"
-             },
-             "primary_key": {
+                "referenced_table_name": "materials"
+            },
+            "primary_key": {
                 "columns": [
                     "idList"
                 ],

@@ -7,5 +7,7 @@ module.exports = {
     pars: require('./pars'),
     materials: require('./materials'),
     rmes : require('./rmes'),
-    items : require('./items')
+    items : require('./items'),
+    received: require('./received'),
+    materialsreceived: require('./materialsreceived')
 }
