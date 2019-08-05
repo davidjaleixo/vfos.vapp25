@@ -1,55 +1,58 @@
 {
     "columns": [
         {
-            "allow_null": false,
-            "name": "status",
-            "type": "integer"
+            "name": "idlink",
+            "type": "serial"
         },
         {
             "allow_null": false,
-            "default": "statusdescription",
-            "name": "statusdescription",
+            "default": "linkdescription",
+            "name": "description",
             "size": 100,
             "type": "varchar"
         },
         {
-            "name": "idPars",
-            "type": "serial"
+            "allow_null": false,
+            "default": "link",
+            "name": "link",
+            "size": 255,
+            "type": "varchar"
         },
         {
-            "name": "idProjects",
+            "name": "idmaterials",
             "type": "serial"
         }
     ],
     "constraints": [
         {
+            
             "foreign_key":{
                 "columns":[
-                   "idProjects"
+                   "idmaterials"
                 ],
-                "name":"fk_idProjects",
+                "name":"fk_idmaterials",
                 "on_delete":"CASCADE",
                 "on_update":"CASCADE",
                 "referenced_columns":[
-                   "idProjects"
+                   "idMaterials"
                 ],
-                "referenced_table_name":"projects"
+                "referenced_table_name":"materials"
              },
              "primary_key": {
                 "columns": [
-                    "idPars"
+                    "idlink"
                 ],
-                "name": "pk_idPars",
+                "name": "pk_idlink",
                 "on_delete": "CASCADE",
                 "on_update": "CASCADE"
             },
             "unique": {
                 "columns": [
-                    "idPars"
+                    "idlink"
                 ],
-                "name": "unique_idPars"
+                "name": "idlink"
             }
         }
     ],
-    "table_name": "pars"
+    "table_name": "materialslinks"
 }

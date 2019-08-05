@@ -15,10 +15,35 @@
         {
             "name": "idRmes",
             "type": "serial"
+        },
+        {
+            "name": "createdat",
+            "type": "TIMESTAMP"
+        },
+        {
+            "name": "createdby",
+            "type": "serial"
+        },
+        {
+            "allow_null": false,
+            "name": "qtd",
+            "type": "integer"
         }
     ],
     "constraints": [
         {
+            "foreign_key": {
+                "columns": [
+                    "createdby"
+                ],
+                "name": "fk_createdby",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE",
+                "referenced_columns": [
+                    "idAccounts"
+                ],
+                "referenced_table_name": "accounts"
+            },
             "primary_key": {
                 "columns": [
                     "idRmes"

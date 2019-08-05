@@ -13,7 +13,7 @@
             "type": "integer"
         },
         {
-            "name": "idList",
+            "name": "idparList",
             "type": "serial"
         },
         {
@@ -21,8 +21,11 @@
             "type": "serial"
         },
         {
-            "name": "idMaterials",
-            "type": "serial"
+            "allow_null": false,
+            "default": "link",
+            "name": "link",
+            "size": 255,
+            "type": "varchar"
         }
     ],
     "constraints": [
@@ -53,19 +56,19 @@
             },
             "primary_key": {
                 "columns": [
-                    "idList"
+                    "idparList"
                 ],
-                "name": "pk_idList",
+                "name": "pk_idparList",
                 "on_delete": "CASCADE",
                 "on_update": "CASCADE"
             },
             "unique": {
                 "columns": [
-                    "idList"
+                    "idparList"
                 ],
-                "name": "unique_idList"
+                "name": "unique_idparList"
             }
         }
     ],
-    "table_name": "list"
+    "table_name": "parslinks"
 }

@@ -6,15 +6,36 @@
         },
         {
             "allow_null": false,
-            "default": "projectname",
+            "default": "materialname",
             "name": "name",
             "size": 100,
             "type": "varchar"
+        },
+        {
+            "name": "createdat",
+            "type": "TIMESTAMP"
+        },
+        {
+            "name": "createdby",
+            "type": "serial"
         }
     ],
     "constraints": [
         {
-            "primary_key": {
+            
+            "foreign_key":{
+                "columns":[
+                   "createdby"
+                ],
+                "name":"fk_createdby",
+                "on_delete":"CASCADE",
+                "on_update":"CASCADE",
+                "referenced_columns":[
+                   "idAccounts"
+                ],
+                "referenced_table_name":"accounts"
+             },
+             "primary_key": {
                 "columns": [
                     "idMaterials"
                 ],

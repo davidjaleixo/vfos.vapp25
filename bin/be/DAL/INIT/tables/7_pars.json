@@ -1,0 +1,91 @@
+{
+    "columns": [
+        {
+            "allow_null": false,
+            "default": "pardescription",
+            "name": "description",
+            "size": 100,
+            "type": "varchar"
+        },
+        {
+            "allow_null": false,
+            "name": "qtd",
+            "type": "integer"
+        },
+        {
+            "name": "idPars",
+            "type": "serial"
+        },
+        {
+            "name": "idProjects",
+            "type": "serial"
+        },
+        {
+            "name": "createdat",
+            "type": "TIMESTAMP"
+        },
+        {
+            "name": "createdby",
+            "type": "serial"
+        },
+        {
+            "name": "idmaterials",
+            "type": "serial"
+        }
+    ],
+    "constraints": [
+        {
+            "foreign_key": {
+                "columns": [
+                    "idmaterials"
+                ],
+                "name": "fk_idmaterials",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE",
+                "referenced_columns": [
+                    "idMaterials"
+                ],
+                "referenced_table_name": "materials"
+            },
+            "foreign_key": {
+                "columns": [
+                    "createdby"
+                ],
+                "name": "fk_createdby",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE",
+                "referenced_columns": [
+                    "idAccounts"
+                ],
+                "referenced_table_name": "accounts"
+            },
+            "foreign_key": {
+                "columns": [
+                    "idProjects"
+                ],
+                "name": "fk_idProjects",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE",
+                "referenced_columns": [
+                    "idProjects"
+                ],
+                "referenced_table_name": "projects"
+            },
+            "primary_key": {
+                "columns": [
+                    "idPars"
+                ],
+                "name": "pk_idPars",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE"
+            },
+            "unique": {
+                "columns": [
+                    "idPars"
+                ],
+                "name": "unique_idPars"
+            }
+        }
+    ],
+    "table_name": "pars"
+}
