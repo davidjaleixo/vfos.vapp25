@@ -161,7 +161,6 @@ module.exports = {
     tablesExistsAndCreates: function (cb) {
         //get the list of tables
         let tables = readFilesFromFolder(config.files.db.tables);
-        // console.log(tables);
         let ExistingTables = getExistingTables();
         if (ExistingTables.length > 0) {
             for (var i = 0, len = tables.length; i < len; i++) {
