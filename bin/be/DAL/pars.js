@@ -30,26 +30,8 @@ module.exports = {
             }
         })
     },
-    updateStatus: function (parsId, newStatus, cb) {
-        storage('PATCH', "/tables/pars/rows?filter=idpars=" + parsId, { status: newStatus }, function (err, response, body) {
-            if (!err) {
-                cb(false, { message: "Par is updated" })
-            } else {
-                cb(true, "Relational Storage Component not responding");
-            }
-        })
-    },
-    updateStatusDescription: function (parsId, newDescription, cb) {
-        storage('PATCH', "/tables/pars/rows?filter=idpars=" + parsId, { statusdescription: newDescription }, function (err, response, body) {
-            if (!err) {
-                cb(false, { message: "Par is updated" })
-            } else {
-                cb(true, "Relational Storage Component not responding");
-            }
-        })
-    },
-    create: function (projectid, status, statusdescription, cb) {
-        storage('POST', "/tables/pars/rows", [{ idProjects: projectid, status: status, statusdescription: statusdescription }], function (error, response, body) {
+    create: function (qtd, description, projectid, materialid, cb) {
+        storage('POST', "/tables/pars/rows", [{ idProjects: projectid, qtd: qtd, description: description, idmaterials: materialid }], function (error, response, body) {
             if (!error) {
                 cb(false, { message: "Par is created" })
             } else {
