@@ -21,7 +21,6 @@ module.exports = {
                     }
                 })
             }
-            
         } else {
             res.status(422).json({ message: "Missing required field" })
         }
@@ -39,32 +38,9 @@ module.exports = {
             res.status(422).json({ message: "Missing required field" })
         }
     },
-    update: function (req, res) {
-        if (req.body.status) {
-            dal.pars.updateStatus(req.query.id, req.body.status, function (err, answer) {
-                if (!err) {
-                    res.status(200).send(answer);
-                } else {
-                    res.status(500).end();
-                }
-            })
-        } else {
-            if (req.body.statusdescription) {
-                dal.pars.updateStatusDescription(req.query.id, req.body.statusdescription, function (err, answer) {
-                    if (!err) {
-                        res.status(200).send(answer);
-                    } else {
-                        res.status(500).end();
-                    }
-                })
-            } else {
-                res.status(422).json({ message: "Missing required field" })
-            }
-        }
-    },
     create: function (req, res) {
-        if (req.body.project) {
-            dal.pars.create(req.body.project, req.body.status ? req.body.status : 0, req.body.statusdescription ? req.body.statusdescription : "none", function (err, answer) {
+        if (req.body.project && req.body.materialid) {
+            dal.pars.create(qtd ? qtd : 0, description ? description : "no description provided", req.body.project, materialid, req.user.id, function (err, answer) {
                 if (!err) {
                     res.status(201).json(answer);
                 } else {

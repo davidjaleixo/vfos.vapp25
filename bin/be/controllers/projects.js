@@ -22,6 +22,7 @@ module.exports = {
             })
 
         } else {
+            
             //get all projects
             dal.projects.getByAllocation(req.user.id, function (err, answer) {
                 if (!err) {

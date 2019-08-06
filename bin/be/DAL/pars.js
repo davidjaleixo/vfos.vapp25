@@ -4,7 +4,7 @@ module.exports = {
 
 
     getNewlyCreated: function (projectId, cb) {
-        storage('GET', "/tables/pars/rows?filter=status=0 and idprojects=" + projectId + "&order_by=idpars", {}, function (err, response, body) {
+        storage('GET', "/tables/pars/rows?filter=idprojects=" + projectId + "&order_by=idpars", {}, function (err, response, body) {
             if (!err) {
                 cb(false, JSON.parse(body).list_of_rows[JSON.parse(body).list_of_rows.length - 1])
             } else {
@@ -30,8 +30,8 @@ module.exports = {
             }
         })
     },
-    create: function (qtd, description, projectid, materialid, cb) {
-        storage('POST', "/tables/pars/rows", [{ idProjects: projectid, qtd: qtd, description: description, idmaterials: materialid }], function (error, response, body) {
+    create: function (qtd, description, projectid, materialid, userid, cb) {        
+        storage('POST', "/tables/pars/rows", [{ idProjects: projectid, qtd: qtd, description: description, idmaterials: materialid, createdat: new Date().toUTCString(), createdby: userid }], function (error, response, body) {
             if (!error) {
                 cb(false, { message: "Par is created" })
             } else {

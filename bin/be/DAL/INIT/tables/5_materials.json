@@ -18,12 +18,28 @@
         {
             "name": "createdby",
             "type": "serial"
+        },
+        {
+            "name": "idprojects",
+            "type": "serial"
         }
     ],
     "constraints": [
         {
             
             "foreign_key":{
+                "columns":[
+                   "idprojects"
+                ],
+                "name":"fk_idprojects",
+                "on_delete":"CASCADE",
+                "on_update":"CASCADE",
+                "referenced_columns":[
+                   "idprojects"
+                ],
+                "referenced_table_name":"projects"
+             },
+             "foreign_key":{
                 "columns":[
                    "createdby"
                 ],

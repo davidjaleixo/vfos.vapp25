@@ -18,14 +18,23 @@ router.route('/projects').delete(ctl.projects.delete);
 //pars
 router.route('/pars').get(ctl.pars.get);
 router.route('/pars').post(ctl.pars.create);
-router.route('/pars').patch(ctl.pars.update);
 router.route('/pars').delete(ctl.pars.delete);
+
+//parslinks
+router.route('/parslinks').get(ctl.parslinks.get);
+router.route('/parslinks').post(ctl.parslinks.create);
+router.route('/parslinks').delete(ctl.parslinks.delete);
 
 //materials
 router.route('/materials').get(ctl.materials.get);
 router.route('/materials').post(ctl.materials.create);
 router.route('/materials').patch(ctl.materials.update);
 router.route('/materials').delete(ctl.materials.delete);
+
+//materials links
+router.route('/materialslinks').get(ctl.materialslinks.get);
+router.route('/materialslinks').post(ctl.materialslinks.create);
+router.route('/materialslinks').delete(ctl.materialslinks.delete);
 
 //items
 router.route('/items').get(ctl.items.get);
@@ -45,7 +54,7 @@ router.route('/receiveds').delete(ctl.received.delete);
 router.route('/receiveds').post(ctl.received.create);
 
 //materialsreceived
-router.route('/materialsreceived').get(ctl.materialsreceived.get);
+// router.route('/materialsreceived').get(ctl.materialsreceived.get);
 
 //users
 router.route('/users').get(ctl.users.get);

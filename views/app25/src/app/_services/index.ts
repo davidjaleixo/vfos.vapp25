@@ -12,3 +12,5 @@ export * from './items.service';
 export * from './rmes.service';
 export * from './receiveds.service';
 export * from './materialsreceived.service';
+export * from './materialslinks.service';
+export * from './parslinks.service';

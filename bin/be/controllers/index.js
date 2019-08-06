@@ -9,5 +9,6 @@ module.exports = {
     rmes : require('./rmes'),
     items : require('./items'),
     received: require('./received'),
-    materialsreceived: require('./materialsreceived')
+    materialslinks: require('./materialslinks'),
+    parslinks: require('./parslinks')
 }

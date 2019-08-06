@@ -37,8 +37,8 @@ module.exports = {
             }
         })
     },
-    create: function (status, statusdescription, cb) {
-        storage('POST', "/tables/rmes/rows", [{ status: status, statusdescription: statusdescription }], function (error, response, body) {
+    create: function (qtd, status, statusdescription, userid, parid, cb) {
+        storage('POST', "/tables/rmes/rows", [{ status: status, statusdescription: statusdescription ? statusdescription : "no description", createdby: userid, createdat: new Date().toUTCString(), idpars: parid, qtd: qtd ? qtd : 0 }], function (error, response, body) {
             if (!error) {
                 cb(false, { message: "Rme is created" })
             } else {
@@ -47,7 +47,7 @@ module.exports = {
         })
     },
     getNewlyCreated: function (cb) {
-        storage('GET', "/tables/rmes/rows?filter=status=0 ", {}, function (err, response, body) {
+        storage('GET', "/tables/rmes/rows?filter=status=0", {}, function (err, response, body) {
             if (!err) {
                 cb(false, JSON.parse(body).list_of_rows[JSON.parse(body).list_of_rows.length - 1])
             } else {

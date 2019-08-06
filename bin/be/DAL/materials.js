@@ -1,8 +1,8 @@
 var storage = require('./storageRequester');
 
 module.exports = {
-    getAll: function (cb) {
-        storage('GET', "/tables/materials/rows", {}, function (err, response, body) {
+    getByProject: function (projectid, cb) {
+        storage('GET', "/tables/materials/rows?filter=idprojects=" + projectid, {}, function (err, response, body) {
             if (!err) {
                 cb(false, JSON.parse(body).list_of_rows)
             } else {
@@ -28,8 +28,8 @@ module.exports = {
             }
         })
     },
-    create: function (name, cb) {
-        storage('POST', "/tables/materials/rows", [{ name: name }], function (error, response, body) {
+    create: function (name, userid, projectid, cb) {
+        storage('POST', "/tables/materials/rows", [{ name: name, createdat: new Date().toUTCString(), createdby: userid, idprojects: projectid }], function (error, response, body) {
             if (!error) {
                 cb(false, { message: "Material is created" })
             } else {

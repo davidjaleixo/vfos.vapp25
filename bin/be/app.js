@@ -17,7 +17,7 @@ var cors = require('cors');
 var app = express();
 
 //cors configuration
-if(config.cors.allow){
+if (config.cors.allow) {
   console.log("CORS is allowed!");
   app.use(cors());
 }
@@ -47,14 +47,15 @@ app.use('/api', jwt({
   })
 )
 //set API routes
-app.use('/api',require('./router'));
+app.use('/api', require('./router'));
+
 
 //set Angular static files
 app.use(express.static(path.join(path.normalize(__dirname), '../../views/app25/dist/app25')));
 
 //Serve Angular app - let the Angular decide every what to do with every route by using '*'
-app.get('*', function(req,res){
-	res.sendFile('index.html', {root: path.join(path.normalize(__dirname), '../../views/app25/dist/app25')});
+app.get('*', function (req, res) {
+  res.sendFile('index.html', { root: path.join(path.normalize(__dirname), '../../views/app25/dist/app25') });
 })
 
 
@@ -64,7 +65,7 @@ app.get('*', function(req,res){
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
     res.status(401);
-    res.json({"message" : err.name + ": " + err.message});
+    res.json({ "message": err.name + ": " + err.message });
   }
 });
 
