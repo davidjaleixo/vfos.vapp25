@@ -18,4 +18,7 @@ export class ParsService {
     delete(parId: String) {
         return this.http.delete(environment.apiUrl + '/pars?id=' + parId)
     }
+    getById(parId: String){
+        return this.http.get(environment.apiUrl + '/pars?id=' + parId);
+    }
 }

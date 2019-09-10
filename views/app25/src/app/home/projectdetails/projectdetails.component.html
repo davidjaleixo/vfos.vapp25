@@ -23,7 +23,7 @@
           <a *ngIf="user.role==1||user.role==2" href="#" data-toggle="modal" data-target="#newrmemodal"
             class="card-link">New RME</a>
           <a *ngIf="user.role==1||user.role==2" class="card-link" routerLink="dashboard" href="#">Dashboard</a>
-          <a *ngIf="user.role==2" class="card-link" routerLink="slumphistory" href="#">History</a>
+          <!-- <a *ngIf="user.role==2" class="card-link " routerLink="slumphistory" href="#">History</a> -->
 
         </div>
       </div>
@@ -68,7 +68,7 @@
         <div class="container-fluid">
           <form [formGroup]="newRme">
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-3 col-sm-12">
                 <div class="input-group mb-3">
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="parnumber">PAR</span>
@@ -82,49 +82,124 @@
                   </select>
                 </div>
               </div>
-              <div class="cold-md-12">
-                <!-- table itemsList -->
-
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>
-                        #
-                      </th>
-                      <th>
-                        Name
-                      </th>
-                      <th>
-                        Qtd
-                      </th>
-                      <th>Qtd to receive</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let paritem of parslist; let index = index">
-
-
-                      <td>{{ paritem.idlist }}</td>
-                      <td>{{ paritem.description }}</td>
-                      <td>{{ paritem.qtd }}</td>
-
-                      <td>
-                        <input type="number" min="0" inputmode="numeric" pattern="[0-9]*" class="form-control"
-                          placeholder="Item quantity" class="form-control" aria-label="Text input with checkbox" [(ngModel)]="receivingList[index]" [ngModelOptions]="{standalone: true}">
-                      </td>
-
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="col-md-3 col-sm-4" *ngIf="showpar">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Description</span>
+                  </div>
+                  <input type="text" class="form-control" *ngIf="showpar" [(ngModel)]="showpar.description"
+                    [ngModelOptions]="{standalone: true}" placeholder="Link description" aria-label="PAR description"
+                    disabled>
+                </div>
               </div>
+              <div class="col-md-3 col-sm-4" *ngIf="showpar">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Qtd</span>
+                  </div>
+                  <input type="text" class="form-control" *ngIf="showpar" [(ngModel)]="showpar.qtd"
+                    [ngModelOptions]="{standalone: true}" placeholder="Link description" aria-label="PAR qtd" disabled>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-4" *ngIf="showpar">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Material</span>
+                  </div>
+                  <input type="text" class="form-control" *ngIf="showpar" [(ngModel)]="showpar.idmaterials"
+                    [ngModelOptions]="{standalone: true}" placeholder="Link description" aria-label="PAR qtd" disabled>
+                </div>
+              </div>
+            </div>
+            <div class="alert alert-warning" role="alert" *ngIf="showpar && listrmes.length >= 1 && approvedrmes >= 1">
+              This PAR has already {{ approvedrmes | json}} approvals
+            </div>
+            <hr />
+            <div class="row">
 
 
+              <div class="col-md-4">
 
+                <div class="card">
+                  <div class="card-header">
+                    Par's specifications
+                  </div>
+                  <div class="card-body">
+                    <!-- LINK LIST -->
+                    <table class="table table-striped" *ngIf="showpar">
+                      <tbody>
+                        <tr *ngFor="let link of showpar.links">
+                          <td>{{link.description}}</td>
+                          <td><a href="{{link.link}}">Link</a></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
 
+                <div class="card">
+                  <div class="card-header">
+                    Material specifications
+                  </div>
+                  <div class="card-body">
+                    <!-- LINK LIST -->
+                    <table class="table table-striped" *ngIf="showpar">
+                      <tbody>
+                        <tr *ngFor="let link of showpar.links">
+                          <td>{{link.description}}</td>
+                          <td><a href="{{link.link}}">Link</a></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
 
+                <div class="card">
+                  <div class="card-header">
+                    RME Action
+                  </div>
+                  <div class="card-body">
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Qtd</span>
+                      </div>
+                      <input type="number" min="0" max="{{showpar.qtd}}" inputmode="numeric" pattern="[0-9]*"
+                        class="form-control" formControlName="qtd" placeholder="Receiving amount" aria-label="RME qtd"
+                        [ngClass]="{ 'is-invalid': submitted && frme.qtd.errors }">
+                    </div>
+                    
+                    <!-- Rounded switch -->
+                    <!-- <div class="row">
+                      <div class="col-md-6">
+                        <label>Material Approval:</label>
+                      </div>
 
+                      <div class="col-md-6">
 
-
+                        <label class="switch mb-3">
+                          <input type="checkbox" formControlName="status"
+                            [ngClass]="{ 'is-invalid': submitted && frme.status.errors }">
+                          <span class="slider round"></span>
+                        </label>
+                      </div>
+                    </div> -->
+                    
+                    <div class="form-group">
+                      <label for="comment">Comments:</label>
+                      <textarea class="form-control" formControlName="description" rows="5" id="comment"
+                        [ngClass]="{ 'is-invalid': submitted && frme.description.errors }"></textarea>
+                    </div>
+                    
+                    <!-- <label>RME Comments</label>
+                    <input type="text" class="form-control" [(ngModel)]="description" placeholder="Receiving amount"
+                      aria-label="RME qtd"> -->
+                  </div>
+                </div>
+              </div>
 
             </div>
           </form>
@@ -166,7 +241,7 @@
                 <div class="card-header">
                   New Item
                 </div>
-                <div class="card-body">
+                <div class="card-body" *ngIf="materials">
                   <form [formGroup]="newItem">
                     <div class="alert alert-danger" *ngIf="materials.length == 0">
                       Please register a new material type in project settings.
@@ -199,7 +274,7 @@
                     </div>
                     <!-- error form warning end -->
 
-                    <!-- <label for="itemmaterial">Type</label> -->
+
                     <div class="input-group mb-3">
                       <div class="input-group-prepend">
                         <span class="input-group-text" id="newitemtype">Type</span>
@@ -220,8 +295,29 @@
                     <!-- error form warning end -->
                   </form>
                 </div>
+
+                <hr />
+
+                <div class="card-body">
+                  <p>Product Specifications</p>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Link Description</span>
+                    </div>
+                    <input type="text" class="form-control" [(ngModel)]="newParLink.description"
+                      placeholder="Link description" aria-label="Link name">
+                  </div>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Link URL</span>
+                    </div>
+                    <input type="text" class="form-control" [(ngModel)]="newParLink.link" placeholder="Link URL"
+                      aria-label="Link URL">
+                  </div>
+                </div>
                 <div class="card-footer">
-                  <button (click)="addItem()" class="btn btn-vfos float-right"><i class="fa fa-plus"></i> Add</button>
+                  <button (click)="addLink()" class="btn btn-vfos float-right"><i class="fa fa-plus"></i> Add
+                    link</button>
                 </div>
               </div>
             </div>
@@ -233,31 +329,31 @@
             <!-- list of materials for this par -->
             <div class="col-md-6 col-sm-12">
               <!-- table itemsList -->
-              <table class="table table-striped" [mfData]="itemsList" #mf="mfDataTable" [mfRowsOnPage]="5">
+              <table class="table table-striped" [mfData]="newParLinks" #mf="mfDataTable" [mfRowsOnPage]="5">
                 <thead>
                   <tr>
                     <th>
-                      <mfDefaultSorter by="description">Name</mfDefaultSorter>
+                      <mfDefaultSorter by="id">#</mfDefaultSorter>
                     </th>
                     <th>
-                      <mfDefaultSorter by="qtd">Qtd</mfDefaultSorter>
+                      <mfDefaultSorter by="description">Description</mfDefaultSorter>
                     </th>
                     <th>
-                      <mfDefaultSorter by="itemmaterial">Type</mfDefaultSorter>
+                      <mfDefaultSorter>Link</mfDefaultSorter>
                     </th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of mf.data">
+                  <tr *ngFor="let link of mf.data">
 
 
-                    <td>{{ item.description }}</td>
-                    <td>{{ item.qtd }}</td>
-                    <td>{{ item.itemmaterial.name }}</td>
+                    <td>{{ link.id }}</td>
+                    <td>{{ link.description }}</td>
+                    <td><a href="{{link.link}}">Link</a></td>
 
                     <td>
-                      <button class="btn btn-sm btn-danger" (click)="delItem(item.id)"><i class="fa fa-trash-o"
+                      <button class="btn btn-sm btn-danger" (click)="delLink(link.id)"><i class="fa fa-trash-o"
                           aria-hidden="true"></i></button>
                     </td>
 

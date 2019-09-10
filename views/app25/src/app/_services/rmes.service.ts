@@ -10,13 +10,16 @@ export class RmesService {
     getByPar(parId: String) {
         return this.http.get(environment.apiUrl + '/rmes?par=' + parId);
     }
-    create(parId: String, qtd: Number, status: Number, description: String) {
-        return this.http.post(environment.apiUrl + '/rmes', { par: parId, qtd: qtd, status: status, description: description });
+    create(parId: String, qtd: Number, status: Number, description: String) {        
+        return this.http.post(environment.apiUrl + '/rmes', { par: parId, qtd: qtd, status: status , description: description });
     }
     getNewly() {
         return this.http.get(environment.apiUrl + '/rmes?newly=true');
     }
-    updateStatus(rmeId: String, newStatus: Number) {
-        return this.http.patch(environment.apiUrl + '/rmes?id=' + rmeId, { status: newStatus })
+    updateStatus(rmeId: String, newStatus: Number, comment: String) {
+        return this.http.patch(environment.apiUrl + '/rmes?id=' + rmeId, { status: newStatus, comment: comment })
+    }
+    getByProject(projectid: String){
+        return this.http.get(environment.apiUrl + '/rmes?project='+projectid);
     }
 }

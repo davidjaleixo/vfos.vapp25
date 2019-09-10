@@ -2,15 +2,10 @@
     "columns": [
         {
             "allow_null": false,
-            "default": "listdescription",
+            "default": "linkdescription",
             "name": "description",
             "size": 100,
             "type": "varchar"
-        },
-        {
-            "allow_null": false,
-            "name": "qtd",
-            "type": "integer"
         },
         {
             "name": "idparList",

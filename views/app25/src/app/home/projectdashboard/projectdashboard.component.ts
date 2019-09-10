@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProjectService, ParsService, RmesService, MaterialReceivedService } from 'src/app/_services';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-projectdashboard',
@@ -18,12 +19,14 @@ export class ProjectdashboardComponent implements OnInit {
   rmestobe: any;
   parinfo: any;
   parinfoitems: any;
+  approvedrmes: any;
+  parswithrmes: any;
+  approvalrme: any;
 
   constructor(private projectservice: ProjectService,
     private router: ActivatedRoute,
     private parsservice: ParsService,
     private rmesservice: RmesService,
-    private matrec: MaterialReceivedService,
     private alert: ToastrService
   ) { }
 
@@ -32,87 +35,60 @@ export class ProjectdashboardComponent implements OnInit {
     this.rmestobe = [];
     this.parsservice.getByProject(this.router.snapshot.paramMap.get("idproject")).subscribe(data => {
       this.pars = data;
+      this.getRmes();
+    })
+  }
 
+  getRmes() {
+    this.rmesservice.getByProject(this.router.snapshot.paramMap.get("idproject")).subscribe(listofrmes => {
 
+      this.rmes = listofrmes;
+      this.approvedrmes = 0;
+      this.rmestobe = [];
+      this.rmes.forEach(eachRme => {
+        //count the approvals
+        if (eachRme.status == "1") {
+          this.approvedrmes = this.approvedrmes + 1
 
-      console.log("pars done");
-      this.matrec.getAllByProject(this.router.snapshot.paramMap.get("idproject")).subscribe(data => {
-        this.mats = data;
-        console.log("mats done")
-
-        this.pars.forEach(eachPar => {
-          if (eachPar.status == 1) {
-            this.parstobe.push(eachPar)
-          }
-          //init new variables
-          if (!eachPar.totalreceived) {
-            eachPar.totalreceived = 0;
-          }
-          if (!eachPar.totalitems) {
-            eachPar.totalitems = 0;
-          }
-          if (!eachPar.rmesapproved) {
-            eachPar.rmesapproved = 0
-          }
-          if (!eachPar.rmesrejected) {
-            eachPar.rmesrejected = 0
-          }
-          if (!eachPar.rmestobe) {
-            eachPar.rmestobe = 0
-          }
-          this.mats.forEach(eachItem => {
-            if (eachItem.idpars == eachPar.idpars) {
-              // get the approved rmes to get total amount of materials received
-              if (eachItem.rmesstatus == 2) {
-                eachPar.totalreceived += +eachItem.receivedqtd;
-              }
-              // sum the amount of items to be received
-              eachPar.totalitems += +eachItem.itemqtd
-              // sum the rmes status
-              if (eachItem.rmesstatus == 2) {
-                eachPar.rmesapproved += 1
-              }
-              if (eachItem.rmesstatus == 3) {
-                eachPar.rmesrejected += 1
-              }
-
-              //get the unique RMES needing attention
-              if (eachItem.rmesstatus == 1) {
-                console.log("consolidating rmes...")
-                //check if the list is empty
-                if (this.rmestobe.length == 0) {
-                  //add
-                  this.rmestobe.push({ idrme: eachItem.idrme, item: [eachItem.idlist], par: eachItem.idpars })
-                  console.log("First done");
-                } else {
-                  //check if it already exists
-                  this.rmestobe.forEach((eachRme, idx, array) => {
-                    if (eachRme.idrme == eachItem.idrme) {
-                      //do nothing - dont add this
-                      console.log("this rme " + eachItem.idrme + "already exists")
-                      eachRme.item.push(eachItem.idlist);
-                      return
-                    }
-                    if (idx == array.length - 1) {
-                      //add
-
-                      this.rmestobe.push({ idrme: eachItem.idrme, item: [eachItem.idlist], par: eachItem.idpars })
-                      console.log("RMES TOBE: ", this.rmestobe)
-                    }
-                  })
-                }
-
-              }
-            }
-
-          })
-        });
+        }
       })
 
+      //organize by pars
+      this.parswithrmes = _.groupBy(this.rmes, "idpars");
+      console.log("groupedbypars", JSON.stringify(this.parswithrmes));
+
+      // for (let rmes of Object.values(this.parswithrmes)) {
+      //   console.log(rmes);
+      //   console.log(_.groupBy(rmes, "idroles"))
+      // }
+      // group by rmes_status for each par
+      for(let key of Object.keys(this.parswithrmes)){
+        console.log("key:",key,"value:",this.parswithrmes[key]);
+        this.parswithrmes[key] = _.groupBy(this.parswithrmes[key], "status")
+      }
+
+      for(let par of Object.keys(this.parswithrmes)){
+        console.log("checking par: ", par);
+        //check if there is approvals
+        if(this.parswithrmes[par]["null"]){
+          this.rmestobe.push({parid: par, rmes: this.parswithrmes[par]["null"]}) 
+        } 
+      }
+      
+      //count approved qtd and merge with pars structure
+      this.pars.forEach(eachPar => {
+        eachPar.received = 0;
+        for(let par of Object.keys(this.parswithrmes)){
+          //search for approved rmes
+          if(par == eachPar.idpars && this.parswithrmes[par]["1"]){
+            this.parswithrmes[par]["1"].forEach(eachApprovedRme => {
+              eachPar.received = eachPar.received + +eachApprovedRme.rmeqtd;
+              
+            })
+          }
+        }
+      })
     })
-
-
-
   }
 
   ngOnInit() {
@@ -127,37 +103,52 @@ export class ProjectdashboardComponent implements OnInit {
         console.log(err);
       })
     this.getPars();
+    // this.getRmes();
   }
   approvePar(parid) {
     console.log(parid)
-    this.parsservice.updateStatus(parid, 2).subscribe(data => {
-      this.alert.success("PAR " + parid + " has been approved!")
 
-      this.getPars();
-
-    })
   }
   rejectPar(parid) {
     console.log(parid)
-    this.parsservice.updateStatus(parid, 3).subscribe(data => {
-      this.alert.success("PAR " + parid + " has been rejected!")
-      this.getPars();
-    })
+    // this.parsservice.updateStatus(parid, 3).subscribe(data => {
+    //   this.alert.success("PAR " + parid + " has been rejected!")
+    //   this.getPars();
+    // })
   }
-  approveRme(rmeid) {
-    console.log(rmeid)
-    this.rmesservice.updateStatus(rmeid, 2).subscribe(data => {
-      this.alert.success("RME " + rmeid + " has been approved!")
-      this.getPars();
-
-    })
+  approveRme(rmetobeapproved) {
+    console.log(rmetobeapproved)
+    this.approvalrme = rmetobeapproved;
+  }
+  confirmRme(){
+    if(!this.approvalrme.approvaldecision || this.approvalrme.approvaldecision == ""){
+      this.alert.error("You need to add a comment");
+    }
+    
+    this.rmesservice.updateStatus(this.approvalrme.idrmes, 1, this.approvalrme.approvaldecision).subscribe(
+      data => {
+        this.alert.success("You have approved the RME");
+        this.getPars();
+      }
+    )
+  }
+  discardRme(){
+    if(!this.approvalrme.approvaldecision || this.approvalrme.approvaldecision == ""){
+      this.alert.error("You need to add a comment");
+    }
+    this.rmesservice.updateStatus(this.approvalrme.idrmes, 0, this.approvalrme.approvaldecision).subscribe(
+      data => {
+        this.alert.success("You have rejected the RME");
+        this.getPars();
+      }
+    )
   }
   rejectRme(rmeid) {
     console.log(rmeid)
-    this.rmesservice.updateStatus(rmeid, 3).subscribe(data => {
-      this.alert.success("RME " + rmeid + " has been rejected!")
-      this.getPars();
-    })
+    // this.rmesservice.updateStatus(rmeid, 3).subscribe(data => {
+    //   this.alert.success("RME " + rmeid + " has been rejected!")
+    //   this.getPars();
+    // })
   }
   showParInfo(parid) {
     this.parinfoitems = [];

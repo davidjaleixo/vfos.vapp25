@@ -1,7 +1,7 @@
 {
     "columns": [
         {
-            "allow_null": false,
+            "allow_null": true,
             "name": "status",
             "type": "integer"
         },
@@ -28,10 +28,26 @@
             "allow_null": false,
             "name": "qtd",
             "type": "integer"
+        },
+        {
+            "name": "idPars",
+            "type": "serial"
         }
     ],
     "constraints": [
         {
+            "foreign_key": {
+                "columns": [
+                    "idPars"
+                ],
+                "name": "fk_idPars",
+                "on_delete": "CASCADE",
+                "on_update": "CASCADE",
+                "referenced_columns": [
+                    "idPars"
+                ],
+                "referenced_table_name": "pars"
+            },
             "foreign_key": {
                 "columns": [
                     "createdby"

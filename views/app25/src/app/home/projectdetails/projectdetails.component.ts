@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectService, AuthenticationService, SupplierService, CompositionsService, SlumpService, NotificationService, MaterialService, ParsService, ItemsService, RmesService, ReceivedService } from '../../_services';
+import { ProjectService, AuthenticationService, SupplierService, CompositionsService, SlumpService, NotificationService, MaterialService, ParsService, ItemsService, RmesService, ReceivedService, ParsLinksService } from '../../_services';
 import { ActivatedRoute } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 //loading spinner
 import { NgxSpinnerService } from 'ngx-spinner';
 import { empty, EMPTY } from 'rxjs';
+import { createOfflineCompileUrlResolver } from '@angular/compiler';
 
 @Component({
   selector: 'app-projectdetails',
@@ -22,8 +23,13 @@ export class ProjectdetailsComponent implements OnInit {
   submitted: boolean;
   itemsList: any[];
   pars: any;
+  newParLink: any;
+  newParLinks: any;
   parslist: any;
   receivingList: any[];
+  showpar: any;
+  listrmes: any;
+  approvedrmes: any;
 
   nextaction: any = { show: false };
 
@@ -41,10 +47,13 @@ export class ProjectdetailsComponent implements OnInit {
     private parsservice: ParsService,
     private itemservice: ItemsService,
     private rmesservice: RmesService,
-    private receivedservice: ReceivedService
+    private receivedservice: ReceivedService,
+    private parslinksservice: ParsLinksService
   ) { }
 
   ngOnInit() {
+    this.newParLinks = [];
+    this.newParLink = { description: '', link: '' };
 
     //init the new item form
     this.newItem = this.fb.group({
@@ -55,19 +64,25 @@ export class ProjectdetailsComponent implements OnInit {
 
     //init the new rme form
     this.newRme = this.fb.group({
-      parnumber: ['', [Validators.required]]
+      parnumber: ['', [Validators.required]],
+      qtd: ['', [Validators.required]],
+      description: ['', [Validators.required]]
     })
 
     //init items list
     this.itemsList = [];
 
+    this.listrmes = [];
+    this.approvedrmes = 0;
+    this.showpar = { idpars: 0, description: "", qtd: 0 };
     this.projectservice.getProject(this.router.snapshot.paramMap.get("idproject")).subscribe(
       data => {
         console.log(data);
         this.project = data;
       }, err => {
         console.log(err);
-      })
+      }
+    )
 
     //get user details
     let user = this.authentication.getUserDetails();
@@ -76,7 +91,7 @@ export class ProjectdetailsComponent implements OnInit {
     }
 
     //get available materials
-    this.materialservice.getAll().subscribe(data => {
+    this.materialservice.getByProject(this.router.snapshot.paramMap.get("idproject")).subscribe(data => {
       this.materials = data;
     }, err => { })
 
@@ -90,11 +105,34 @@ export class ProjectdetailsComponent implements OnInit {
     )
   }
 
-  getListFromPar(parid) {
-    this.itemservice.getByPar(parid).subscribe(data => {
-      this.parslist = data;
-      this.receivingList = new Array(this.parslist.length);
+  getListRme(parid) {
+    this.rmesservice.getByPar(parid).subscribe(listrme => {
+      this.listrmes = listrme;
+      this.approvedrmes = 0;
+      this.listrmes.forEach(eachRme => {
+        if (+eachRme.status == 1) {
+          console.log("YYYYYYYY");
+          this.approvedrmes = this.approvedrmes + 1;
+        }
+      })
     })
+  }
+
+  getListFromPar(parid) {
+    this.parsservice.getById(parid).subscribe(data => {
+      console.log(data);
+      this.showpar = data;
+      //get links for this par
+      this.parslinksservice.getByParId(parid).subscribe(parlinks => {
+        this.showpar.links = parlinks;
+      })
+      //get material infomation
+
+    })
+    // this.itemservice.getByPar(parid).subscribe(data => {
+    //   this.parslist = data;
+    //   this.receivingList = new Array(this.parslist.length);
+    // })
   }
 
   //getter
@@ -114,205 +152,80 @@ export class ProjectdetailsComponent implements OnInit {
     this.newItem.reset();
     this.submitted = false;
   }
-  delItem(id) {
-    this.itemsList.forEach((eachItem, idx, array) => {
-      if (eachItem.id == id) {
-        this.itemsList.splice(idx, 1);
-        return
+  delLink(id) {
+    this.newParLinks.forEach((eachLink, idx, array) => {
+      if (eachLink.id == id) {
+        this.newParLinks.splice(idx, 1);
       }
     })
-
   }
 
   onParSelectChange(parObject) {
     console.log(parObject);
     this.getListFromPar(parObject.idpars);
+    this.getListRme(parObject.idpars);
 
+  }
+  addLink() {
+    if (this.newParLink.description != '' && this.newParLink.link != '') {
+      this.newParLink.id = this.newParLinks.length + 1;
+      this.newParLinks.push(this.newParLink);
+      this.newParLink = { description: '', link: '' };
+    } else {
+      this.alert.error("The description and link form must be filled");
+    }
   }
   createRME() {
-    console.log(this.receivingList);
-    this.rmesservice.create(0, 'New RME to be approved').subscribe(data => {
-      //RME was created
-      //get the newly created RME
-      this.rmesservice.getNewly().subscribe(data => {
-        let newRme: any = data;
-        console.log("newRme:", newRme);
-        this.parslist.forEach((eachItem, idx, array) => {
-          if (this.receivingList[idx] != 0 && this.receivingList[idx] != null) {
-            console.log("creating received for ", idx, "-", this.receivingList[idx])
-            //create a new item to be received in the new RME created
-            this.receivedservice.create(eachItem.idlist, newRme.idrmes, this.receivingList[idx]).subscribe(data => {
-              //probably nothing to do here
-            })
-          }
-          if (idx == array.length - 1) {
-            this.alert.success("RME was created with id " + newRme.idrmes);
-            this.rmesservice.updateStatus(newRme.idrmes, 1).subscribe(statusUpdate => {
-              this.alert.success("RME " + newRme.idrmes + " was SENT to approval!");
-              //flush the receiving list
-              this.receivingList = [];
-            })
-          }
-        })
+    this.submitted = true;
+    if (this.newRme.invalid) {
+      console.log(this.frme);
+      return;
+    }
+    if (this.showpar.idpars) {
+      let status = null;
+      if (this.user.role == "2") { status = 1 }
+      this.rmesservice.create(this.frme.parnumber.value.idpars, this.frme.qtd.value, status, this.frme.description.value).subscribe(data => {
+        this.alert.success("New RME created");
       })
-    })
-
+    }
   }
   createPAR() {
-    this.parsservice.create(this.project.idprojects, 0, 'New PAR to be approved').subscribe(data => {
-      //PAR was created
-      //get the newly created PAR
-      this.parsservice.getNewly(this.project.idprojects).subscribe(data => {
-        let newPar: any = data;
+    this.submitted = true;
+    if (this.newItem.invalid) {
+      console.log(this.f);
+      return;
+    }
+    // let newItem = { id: this.itemsList.length + 1, description: this.f.name.value, qtd: this.f.qtd.value, itemmaterial: this.f.itemmaterial.value }
+    // this.itemsList.push(newItem);
+    console.log("Creating PAR...");
+    console.log(this.f.itemmaterial.value);
+    this.parsservice.create(this.project.idprojects, this.f.name.value, this.f.itemmaterial.value.idmaterials, this.f.qtd.value).subscribe(data => {
+      this.alert.success("PAR created");
 
-        console.log("newPar:", newPar);
-        this.itemsList.forEach((eachItem, idx, array) => {
-          this.itemservice.create(newPar.idpars, eachItem.itemmaterial.idmaterials, eachItem.qtd, eachItem.description).subscribe(response => {
-            if (idx == array.length - 1) {
-              this.alert.success("PAR was created with id " + newPar.idpars);
-              //change par status
-              this.parsservice.updateStatus(newPar.idpars, 1).subscribe(statusUpdate => {
-                this.alert.success("PAR " + newPar.idpars + " was SENT to approval!");
-                //flush the itemsList
-                this.itemsList = [];
-              })
-            }
-          }, err => {
-            this.alert.error(err);
+      //get the newly created
+      this.parsservice.getByProject(this.project.idprojects).subscribe(data => {
+        let createdPar: any;
+        createdPar = data;
+        //create the links for this new par
+        this.newParLinks.forEach((eachLink, idx, array) => {
+          this.parslinksservice.create(createdPar[createdPar.length - 1].idpars, eachLink.description, eachLink.link).subscribe(data => {
+            this.alert.success("Link " + eachLink.description + " added");
           })
+          if (idx == array.length - 1) {
+            //reset the form variable
+            this.newParLinks = [];
+            //flush the form
+            this.newItem.reset();
+            this.submitted = false;
+          }
         })
-      }, err => {
-        console.log('err', err);
+
       })
-
     }, err => {
-
+      this.alert.error(err);
     })
+
   }
 
-  // nextactionSend() {
-  //   console.log("sending notifications... from:",this.nextaction.answer);
-  //   this.nextaction.show = false;
-  //   this.spinner.show();
-  //   this.notificationservice.sendNotification(this.nextaction.answer).subscribe(
-  //     data => {
-  //       this.spinner.hide();
-  //       this.alert.success("Notifications sent");
-  //       this.newslump.reset();
-  //     }, err => {
-  //       this.spinner.hide();
-  //       this.alert.error(err);
-  //       this.nextaction.show = false;
-  //       this.newslump.reset();
-  //     })
-  // }
-  // nextactionNo() {
-  //   console.log("No notifications will be sent");
-  //   this.nextaction.show = false;
-  //   this.newslump.reset();
-  // }
-
-  // saveSlump() {
-
-  //   if (this.f.supplierid.value != "" && this.f.value.value != 0 && this.f.compositionid.value.idcompositions != "" && this.f.loadid.value != "") {
-  //     //console.log("max:", this.f.compositionid.value.tholdmax);
-  //     //console.log("min:", this.f.compositionid.value.tholdmin);
-  //     if (this.f.value.value >= this.f.compositionid.value.tholdmax || this.f.value.value <= this.f.compositionid.value.tholdmin) {
-
-  //       //check if the introduced value is outside of the thresholds
-  //       var result = confirm("The slump test value is out of threshold's range - Notification will be sent!");
-  //       if (result) {
-  //         //if the user wants to trigger a notification already
-
-  //         //get the next predicted value
-  //         this.spinner.show();
-  //         this.slumpservice.registerTest(this.f.value.value, this.f.compositionid.value.idcompositions, this.project.idprojects, this.f.supplierid.value.idsuppliers, this.f.loadid.value).subscribe(
-  //           data => {
-  //             console.log("registerTest", data);
-  //             this.alert.success("Test was saved")
-
-  //             //generate already the notification because threshold is already overcomed
-  //             console.log("Creating first notification... threshold overcomed");
-  //             this.notificationservice.sendNotification({ result: { code: 3, message: "outside thresholds", type: "measured" }, prediction: this.f.value.value, idcompositions: this.f.compositionid.value.idcompositions, idprojects: this.project.idprojects, idsuppliers: this.f.supplierid.value.idsuppliers }).subscribe(
-  //               notAnswer => {
-  //                 console.log("Creating first notification answer: ", notAnswer);
-  //                 this.alert.success("Warnings sent");
-  //               }, err => {
-  //                 console.log("Creating first notification answer: ", err);
-  //                 this.alert.success("Warning not sent");
-  //               }
-  //             )
-
-
-  //             //get the prediction FOR THE NEXT SLUMP TEST VALUE
-  //             this.slumpservice.createPrediction(this.f.value.value, this.f.compositionid.value.idcompositions, this.project.idprojects, this.f.supplierid.value.idsuppliers, this.f.loadid.value).subscribe(
-  //               predictionAnswer => {
-  //                 this.spinner.hide();
-  //                 this.nextaction.answer = predictionAnswer;
-  //                 // this.newslump.reset();
-  //                 console.log("predictionAnswer", predictionAnswer)
-  //                 if (predictionAnswer.result.code != 0 && predictionAnswer.result.code != 4) {
-  //                   this.nextaction.show = true;
-  //                   this.nextaction.value = predictionAnswer.prediction;
-  //                   this.nextaction.deviation = (1 - predictionAnswer.deviation) * 100;
-  //                   this.nextaction.message = predictionAnswer.result.message;
-  //                 } else {
-  //                   this.newslump.reset();
-  //                 }
-  //               },
-  //               predictionErr => {
-  //                 console.log("predictionErr", predictionErr)
-  //               }
-  //             )
-
-  //           }, err => {
-  //             this.spinner.hide();
-  //             this.alert.error("Error ")
-  //           })
-
-
-  //       } else {
-  //         this.alert.info("Test was not stored by your decision");
-
-  //       }
-
-  //     } else {
-  //       this.spinner.show();
-  //       this.slumpservice.registerTest(this.f.value.value, this.f.compositionid.value.idcompositions, this.project.idprojects, this.f.supplierid.value.idsuppliers, this.f.loadid.value).subscribe(
-  //         data => {
-  //           console.log("registerTest", data);
-
-  //           this.alert.success("Test was saved")
-
-  //           //get the prediction
-  //           this.slumpservice.createPrediction(this.f.value.value, this.f.compositionid.value.idcompositions, this.project.idprojects, this.f.supplierid.value.idsuppliers, this.f.loadid.value).subscribe(
-  //             predictionAnswer => {
-  //               this.spinner.hide();
-  //               this.nextaction.answer = predictionAnswer;
-  //               console.log("predictionAnswer", predictionAnswer)
-  //               if (predictionAnswer.result.code != 0 && predictionAnswer.result.code != 4) {
-  //                 this.nextaction.show = true;
-  //                 this.nextaction.value = predictionAnswer.prediction;
-  //                 this.nextaction.deviation = (1 - predictionAnswer.deviation) * 100;
-  //                 this.nextaction.message = predictionAnswer.result.message;
-  //               } else {
-  //                 this.newslump.reset();
-  //               }
-  //             },
-  //             predictionErr => {
-  //               console.log("predictionErr", predictionErr)
-  //             }
-  //           )
-
-
-  //         }, err => {
-  //           this.spinner.hide();
-  //           this.alert.error("Error ")
-  //         })
-  //     }
-  //   } else {
-  //     this.alert.error("Please insert all the fields")
-  //   }
-  // }
 
 }

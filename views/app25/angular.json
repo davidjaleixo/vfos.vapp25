@@ -30,7 +30,8 @@
               "node_modules/jquery/dist/jquery.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/bootstrap4-toggle/js/bootstrap4-toggle.min.js",
-              "node_modules/chart.js/dist/Chart.js"
+              "node_modules/chart.js/dist/Chart.js",
+              "node_modules/lodash/index.js"
             ]
           },
           "configurations": {

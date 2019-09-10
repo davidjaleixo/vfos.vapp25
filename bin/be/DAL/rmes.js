@@ -10,6 +10,15 @@ module.exports = {
             }
         })
     },
+    getDescribedByProject: function(projectid, cb){
+        storage('GET', "/tables/rmes_with_accounts/rows?filter=idprojects=" + projectid + "&order_by=idrmes", {}, function (err, response, body) {
+            if (!err) {
+                cb(false, JSON.parse(body).list_of_rows)
+            } else {
+                cb(true, "Relational Storage Component not responding");
+            }
+        })
+    },
     delete: function (rmesId, cb) {
         storage('DELETE', "/tables/rmes/rows?filter=idrmes=" + rmesId, {}, function (err, response, body) {
             if (!err) {
@@ -19,8 +28,8 @@ module.exports = {
             }
         })
     },
-    updateStatus: function (rmesId, newStatus, cb) {
-        storage('PATCH', "/tables/rmes/rows?filter=idrmes=" + rmesId, { status: newStatus }, function (err, response, body) {
+    updateStatus: function (rmesId, newStatus, newComment, cb) {
+        storage('PATCH', "/tables/rmes/rows?filter=idrmes=" + rmesId, { status: newStatus, statusdescription: newComment }, function (err, response, body) {
             if (!err) {
                 cb(false, { message: "Rme is updated" })
             } else {
@@ -38,7 +47,7 @@ module.exports = {
         })
     },
     create: function (qtd, status, statusdescription, userid, parid, cb) {
-        storage('POST', "/tables/rmes/rows", [{ status: status, statusdescription: statusdescription ? statusdescription : "no description", createdby: userid, createdat: new Date().toUTCString(), idpars: parid, qtd: qtd ? qtd : 0 }], function (error, response, body) {
+        storage('POST', "/tables/rmes/rows", [{ status: status, statusdescription: statusdescription, createdby: userid, createdat: new Date().toUTCString(), idpars: parid, qtd: qtd }], function (error, response, body) {
             if (!error) {
                 cb(false, { message: "Rme is created" })
             } else {

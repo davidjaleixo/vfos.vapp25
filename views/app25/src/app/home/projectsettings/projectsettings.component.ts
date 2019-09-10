@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectService, AuthenticationService, UserService, AccountsService, MaterialService } from '../../_services';
+import { ProjectService, AuthenticationService, UserService, AccountsService, MaterialService, MaterialLinksService } from '../../_services';
 import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { timeout } from 'q';
 
 @Component({
   selector: 'app-projectsettings',
@@ -14,6 +15,9 @@ export class ProjectsettingsComponent implements OnInit {
   project: any;
   unsetProject: any;
   materials: any;
+  newMaterial: any;
+  newMaterialLink: any;
+  viewMat: any;
   materialName: String;
   users: any;
   availableusers: any;
@@ -32,6 +36,7 @@ export class ProjectsettingsComponent implements OnInit {
     private userservice: UserService,
     private accountservice: AccountsService,
     private materialservice: MaterialService,
+    public materialslinksservice: MaterialLinksService,
     private fb: FormBuilder) { }
 
   getUsersOnProject() {
@@ -47,9 +52,18 @@ export class ProjectsettingsComponent implements OnInit {
 
   getMaterials() {
     //get materials list available
-    this.materialservice.getAll().subscribe(
+    this.materialservice.getByProject(this.router.snapshot.paramMap.get("idproject")).subscribe(
       data => {
         this.materials = data;
+        setTimeout(() => {
+          this.materials.forEach(eachMaterial => {
+            this.users.forEach(eachUser => {
+              if (eachMaterial.createdby == eachUser.idusers) {
+                eachMaterial.createdby = eachUser.username
+              }
+            })
+          })
+        }, 2000)
       }, err => {
         console.log("err", err);
       }
@@ -57,8 +71,9 @@ export class ProjectsettingsComponent implements OnInit {
   }
   ngOnInit() {
     this.materialName = '';
+    this.newMaterial = { name: '', links: [] };
+    this.newMaterialLink = { description: '', link: '' };
 
-    
 
     //define the newUserForm
     this.newUserForm = this.fb.group({
@@ -176,10 +191,25 @@ export class ProjectsettingsComponent implements OnInit {
   }
 
   createMaterial() {
-    this.materialservice.create(this.materialName).subscribe(
+    //create the material
+    this.materialservice.create(this.newMaterial.name, this.router.snapshot.paramMap.get("idproject")).subscribe(
       data => {
         this.alert.success("Material created");
         this.getMaterials();
+        this.materialservice.getByProject(this.router.snapshot.paramMap.get("idproject")).subscribe(data => {
+          let createdMaterial : any;
+          createdMaterial = data;
+          //create the links for this newly created material
+          this.newMaterial.links.forEach((eachLink, idx, array) => {
+            this.materialslinksservice.create(createdMaterial[createdMaterial.length - 1].idmaterials, eachLink.description, eachLink.link).subscribe(createdLink => {
+              this.alert.success("Link " + eachLink.description + " added")
+            })
+            if (idx == array.length - 1) {
+              //clear the form variable
+              this.newMaterial = { name: '', links: [] };
+            }
+          })
+        })
       }, err => {
         this.alert.error("Material not created")
       }
@@ -222,5 +252,32 @@ export class ProjectsettingsComponent implements OnInit {
     })
   }
 
+  addMaterialLink() {
+    if (this.newMaterialLink.description != '' && this.newMaterialLink.link != '') {
+      this.newMaterialLink.id = this.newMaterial.links.length + 1;
+      this.newMaterial.links.push(this.newMaterialLink);
+      this.newMaterialLink = { description: '', link: '' };
+    } else {
+      this.alert.error("The description and link form must be filled");
+    }
+  }
+  deleteMatLink(id) {
+    this.newMaterial.links.forEach((eachLink, idx, array) => {
+      if (eachLink.id == id) {
+        this.newMaterial.links.splice(idx, 1);
+      }
+    })
+  }
+  viewMatLinks(id){
+    this.materialslinksservice.getByMaterialId(id).subscribe(data => {
+      this.viewMat = {};
+      this.viewMat.links = data;
+      this.materials.forEach(eachMaterial => {
+        if(eachMaterial.idmaterials == id){
+          this.viewMat.name = eachMaterial.name
+        }
+      })
+    })
+  }
 
 }

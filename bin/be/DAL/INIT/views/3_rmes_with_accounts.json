@@ -1,0 +1,4 @@
+{
+    "view_definition_query":"select rme.idrmes, rme.idpars, rme.status, rme.statusdescription, rme.createdat, rme.qtd as rmeqtd, usr.idaccounts, usr.username, usr.idroles, roles.accounttype, par.qtd as parqtd, par.idmaterials, par.idprojects from consulgal.rmes as rme left join consulgal.accounts as usr on usr.idaccounts = rme.createdby left join consulgal.roles as roles on roles.idroles = usr.idroles left join consulgal.pars as par on par.idpars = rme.idpars" ,
+    "view_name":"rmes_with_accounts"
+ }

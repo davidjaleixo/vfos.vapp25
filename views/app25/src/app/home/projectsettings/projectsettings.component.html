@@ -61,18 +61,33 @@
     <!-- Settings section END -->
     <div class="card mb-3">
       <div class="card-header">
-        Materials
+        Approved Materials
         <button class="float-right btn btn-sm btn-vfos" data-target="#addmat" data-toggle="modal">
           <i class="fa fa-plus"></i> Add</button>
       </div>
       <div class="card-body">
 
         <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Created by</th>
+              <th scope="col">Date</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody>
             <tr *ngFor="let material of materials">
               <td>{{material.name}}</td>
+              <td *ngIf="material.createdby.length >=10">{{material.createdby}}</td>
+              <td *ngIf="material.createdby.length < 10"><img style="height:20px" src="assets/img/loading.gif"
+                  alt="loading"></td>
+              <td>{{material.createdat}}</td>
               <td>
-                <button class="btn btn-danger btn-sm" (click)="deleteMat(material.idmaterial)">
+                <button class="btn btn-warning btn-sm" (click)="viewMatLinks(material.idmaterials)" data-target="#viewmat" data-toggle="modal">
+                  <i class="fa fa-archive"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" (click)="deleteMat(material.idmaterials)">
                   <i class="fa fa-trash"></i>
                 </button>
               </td>
@@ -82,42 +97,7 @@
         </table>
       </div>
     </div>
-    <!-- COMPOSITIONS START -->
-    <!-- <div class="card mb-5">
-      <div class="card-header">
-        Concrete compositions
-        <button class="float-right btn btn-sm btn-vfos" data-target="#addcomposition" data-toggle="modal">
-          <i class="fa fa-plus"></i> Add</button>
-      </div>
-      <div class="card-body">
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Min Threshold</th>
-              <th scope="col">Max Threshold</th>
-              <th scope="col">Options</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let comps of compositions">
-              <td>{{comps.name}}</td>
-              <td>{{comps.tholdmin}}</td>
-              <td>{{comps.tholdmax}}</td>
-              <td>
-                <button class="btn btn-danger btn-sm" (click)="deleteComposition(comps.idcompositions)">
-                  <i class="fa fa-trash"></i>
-                </button>
-                
-              </td>
-            </tr>
-
-          </tbody>
-        </table>
-      </div>
-    </div> -->
-    <!-- COMPOSITIONS END -->
+   
 
     <!-- USERS START -->
     <div class="card mb-5">
@@ -163,6 +143,28 @@
   </div>
 </section>
 
+<!-- View Material Links Modal -->
+<div id="viewmat" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" >
+    <div class="modal-content">
+      <div class="modal-header" *ngIf="viewMat">
+        <h3>{{viewMat.name}}</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+        <table class="table" *ngIf="viewMat">
+          <tbody>
+            <tr *ngFor="let link of viewMat.links">
+              <th scope="row">{{link.idlink}}</th>
+              <td>{{link.description}}</td>
+              <td><a href="{{link.link}}">Link</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- New Material Modal -->
 <div id="addmat" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
@@ -172,16 +174,61 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
       </div>
       <div class="modal-body">
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Name</span>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Name</span>
+              </div>
+              <input type="text" class="form-control" [(ngModel)]="newMaterial.name" placeholder="Material name"
+                aria-label="Material name">
+            </div>
           </div>
-          <input type="text" class="form-control" [(ngModel)]="materialName" placeholder="Material name"
-            aria-label="Material name">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                Specification links
+              </div>
+              <div class="card-body">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Description</span>
+                  </div>
+                  <input type="text" class="form-control" [(ngModel)]="newMaterialLink.description"
+                    placeholder="Link description" aria-label="Material name">
+                </div>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Link</span>
+                  </div>
+                  <input type="text" class="form-control" [(ngModel)]="newMaterialLink.link" placeholder="Link URL"
+                    aria-label="Material name">
+                </div>
+                <button class="btn btn-vfos" (click)="addMaterialLink()">Add</button>
+              </div>
+              <hr/>
+              <div class="card-body">
+                <table class="table">
+                  <tbody>
+                    <tr *ngFor="let link of newMaterial.links">
+                      <th scope="row">{{link.id}}</th>
+                      <td>{{link.description}}</td>
+                      <td><a href="{{link.link}}">Link</a></td>
+                      <td>
+                        <button class="btn btn-danger btn-sm" (click)="deleteMatLink(link.id)">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button (click)="createMaterial()" data-dismiss="modal" class="btn btn-vfos">Add</button>
+        <button (click)="createMaterial()" data-dismiss="modal" class="btn btn-vfos">Add Material</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
