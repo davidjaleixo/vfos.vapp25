@@ -28,8 +28,12 @@ export class ProjectdetailsComponent implements OnInit {
   parslist: any;
   receivingList: any[];
   showpar: any;
+  showmaterialsspecs: any;
   listrmes: any;
   approvedrmes: any;
+  approvedrmesqtd: any;
+  showquantityalert: boolean;
+  cancreaterme: boolean;
 
   nextaction: any = { show: false };
 
@@ -52,8 +56,11 @@ export class ProjectdetailsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.showquantityalert = false;
+    this.cancreaterme = true;
     this.newParLinks = [];
     this.newParLink = { description: '', link: '' };
+    this.showmaterialsspecs = {name:''}
 
     //init the new item form
     this.newItem = this.fb.group({
@@ -74,6 +81,7 @@ export class ProjectdetailsComponent implements OnInit {
 
     this.listrmes = [];
     this.approvedrmes = 0;
+    this.approvedrmesqtd = 0;
     this.showpar = { idpars: 0, description: "", qtd: 0 };
     this.projectservice.getProject(this.router.snapshot.paramMap.get("idproject")).subscribe(
       data => {
@@ -92,9 +100,14 @@ export class ProjectdetailsComponent implements OnInit {
 
     //get available materials
     this.materialservice.getByProject(this.router.snapshot.paramMap.get("idproject")).subscribe(data => {
+      console.log("materials for the project ", this.router.snapshot.paramMap.get("idproject"), ":", data);
       this.materials = data;
     }, err => { })
 
+    this.getProjectPars();
+  }
+
+  getProjectPars(){
     //get available pars for this project
     this.parsservice.getByProject(this.router.snapshot.paramMap.get("idproject")).subscribe(
       data => {
@@ -108,20 +121,37 @@ export class ProjectdetailsComponent implements OnInit {
   getListRme(parid) {
     this.rmesservice.getByPar(parid).subscribe(listrme => {
       this.listrmes = listrme;
+      console.log("All RMES: ", listrme);
       this.approvedrmes = 0;
+      this.approvedrmesqtd = 0;
       this.listrmes.forEach(eachRme => {
         if (+eachRme.status == 1) {
-          console.log("YYYYYYYY");
+          console.log("Approved RME found");
           this.approvedrmes = this.approvedrmes + 1;
+          this.approvedrmesqtd = this.approvedrmesqtd + +eachRme.qtd;
+          //check if its possible to create a new RME
+          if(this.approvedrmesqtd >= this.showpar.qtd){
+            this.cancreaterme = false;
+          }
         }
       })
     })
   }
-
+  getListMaterialSpecs(idmaterial){
+    this.materialservice.getById(idmaterial).subscribe(data => {
+      console.log("MAT SPECS:", data);
+      this.showmaterialsspecs = data;
+      this.materialservice.getLinksById(idmaterial).subscribe(matlinks => {
+        this.showmaterialsspecs.links = matlinks
+      })
+    })
+  }
   getListFromPar(parid) {
+    this.cancreaterme = true;
     this.parsservice.getById(parid).subscribe(data => {
-      console.log(data);
+      console.log("PAR:", data);
       this.showpar = data;
+      this.getListMaterialSpecs(this.showpar.idmaterials)
       //get links for this par
       this.parslinksservice.getByParId(parid).subscribe(parlinks => {
         this.showpar.links = parlinks;
@@ -183,9 +213,18 @@ export class ProjectdetailsComponent implements OnInit {
     }
     if (this.showpar.idpars) {
       let status = null;
+      //check if the qtd is acceptable
+      if(+this.frme.qtd.value > (+this.showpar.qtd - +this.approvedrmesqtd) ){
+        this.alert.error("You cannot receive more then the requested quantity")
+        this.showquantityalert = true;
+        return;
+      }
       if (this.user.role == "2") { status = 1 }
       this.rmesservice.create(this.frme.parnumber.value.idpars, this.frme.qtd.value, status, this.frme.description.value).subscribe(data => {
         this.alert.success("New RME created");
+        this.showquantityalert = false;
+        this.submitted = false;
+        this.newRme.reset();
       })
     }
   }
@@ -217,6 +256,7 @@ export class ProjectdetailsComponent implements OnInit {
             //flush the form
             this.newItem.reset();
             this.submitted = false;
+            this.getProjectPars();
           }
         })
 

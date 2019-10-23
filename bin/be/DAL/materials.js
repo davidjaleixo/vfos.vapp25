@@ -1,6 +1,15 @@
 var storage = require('./storageRequester');
 
 module.exports = {
+    getById: function(materialId, cb){
+        storage('GET', "/tables/materials/rows?filter=idmaterials=" + materialId, {}, function(err, response, body){
+            if(!err){
+                cb(false, JSON.parse(body).list_of_rows[0])
+            }else{
+                cb(true, "Relational Storage Component not responding")
+            }
+        })
+    },
     getByProject: function (projectid, cb) {
         storage('GET', "/tables/materials/rows?filter=idprojects=" + projectid, {}, function (err, response, body) {
             if (!err) {

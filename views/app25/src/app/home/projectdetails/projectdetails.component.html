@@ -22,7 +22,7 @@
             class="card-link">New PAR</a>
           <a *ngIf="user.role==1||user.role==2" href="#" data-toggle="modal" data-target="#newrmemodal"
             class="card-link">New RME</a>
-          <a *ngIf="user.role==1||user.role==2" class="card-link" routerLink="dashboard" href="#">Dashboard</a>
+          <a *ngIf="user.role==2" class="card-link" routerLink="dashboard" href="#">Dashboard</a>
           <!-- <a *ngIf="user.role==2" class="card-link " routerLink="slumphistory" href="#">History</a> -->
 
         </div>
@@ -106,13 +106,14 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text">Material</span>
                   </div>
-                  <input type="text" class="form-control" *ngIf="showpar" [(ngModel)]="showpar.idmaterials"
+                  <input type="text" class="form-control" *ngIf="showpar" [(ngModel)]="showmaterialsspecs.name"
                     [ngModelOptions]="{standalone: true}" placeholder="Link description" aria-label="PAR qtd" disabled>
                 </div>
               </div>
             </div>
             <div class="alert alert-warning" role="alert" *ngIf="showpar && listrmes.length >= 1 && approvedrmes >= 1">
-              This PAR has already {{ approvedrmes | json}} approvals
+              This PAR has already <strong>{{ approvedrmes | json}} approvals</strong>. It has been received
+              {{ approvedrmesqtd }} from {{ showpar.qtd }} (missing {{ +showpar.qtd - +approvedrmesqtd}})
             </div>
             <hr />
             <div class="row">
@@ -145,9 +146,9 @@
                   </div>
                   <div class="card-body">
                     <!-- LINK LIST -->
-                    <table class="table table-striped" *ngIf="showpar">
+                    <table class="table table-striped" *ngIf="showmaterialsspecs">
                       <tbody>
-                        <tr *ngFor="let link of showpar.links">
+                        <tr *ngFor="let link of showmaterialsspecs.links">
                           <td>{{link.description}}</td>
                           <td><a href="{{link.link}}">Link</a></td>
                         </tr>
@@ -162,16 +163,26 @@
                   <div class="card-header">
                     RME Action
                   </div>
-                  <div class="card-body">
+                  <div class="card-body" *ngIf="!cancreaterme">
+                    <div class="alert alert-danger" role="alert">
+                      There are no materials left to be received for this PAR
+                    </div>
+                  </div>
+                  <div class="card-body" *ngIf="cancreaterme">
+                    
                     <div class="input-group mb-3">
                       <div class="input-group-prepend">
                         <span class="input-group-text">Qtd</span>
                       </div>
-                      <input type="number" min="0" max="{{showpar.qtd}}" inputmode="numeric" pattern="[0-9]*"
-                        class="form-control" formControlName="qtd" placeholder="Receiving amount" aria-label="RME qtd"
-                        [ngClass]="{ 'is-invalid': submitted && frme.qtd.errors }">
+                      <input type="number" min="0" max="{{+showpar.qtd - +approvedrmesqtd}}" inputmode="numeric"
+                        pattern="[0-9]*" class="form-control" formControlName="qtd" placeholder="Receiving amount"
+                        aria-label="RME qtd"
+                        [ngClass]="{ 'is-invalid': (submitted && frme.qtd.errors) || showquantityalert }">
+                      <div *ngIf="submitted && showquantityalert" class="invalid-feedback">
+                        <div *ngIf="showquantityalert">Must be less or equal to {{+showpar.qtd - +approvedrmesqtd}}</div>
+                      </div>
                     </div>
-                    
+
                     <!-- Rounded switch -->
                     <!-- <div class="row">
                       <div class="col-md-6">
@@ -187,13 +198,13 @@
                         </label>
                       </div>
                     </div> -->
-                    
+
                     <div class="form-group">
                       <label for="comment">Comments:</label>
                       <textarea class="form-control" formControlName="description" rows="5" id="comment"
                         [ngClass]="{ 'is-invalid': submitted && frme.description.errors }"></textarea>
                     </div>
-                    
+
                     <!-- <label>RME Comments</label>
                     <input type="text" class="form-control" [(ngModel)]="description" placeholder="Receiving amount"
                       aria-label="RME qtd"> -->

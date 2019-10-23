@@ -77,19 +77,21 @@
                 <td>
                   <!-- {{par.totalreceived}}, {{par.totalitems}} -->
                   <div class="progress">
-                    <div class="progress-bar progress-bar-striped" role="progressbar" [ngClass]="{ 'bg-danger': par.received > +par.qtd }"
-                      [style.width.%]="(par.received/par.qtd)*100" aria-valuenow="25" aria-valuemin="0"
-                      aria-valuemax="100"> {{ par.received/+par.qtd | percent:'2.2-2' }}</div>
+                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                      [ngClass]="{ 'bg-danger': par.received > +par.qtd }" [style.width.%]="(par.received/par.qtd)*100"
+                      aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                      {{ par.received/+par.qtd | percent:'2.2-2' }}</div>
                   </div>
                 </td>
                 <!-- menuoptions -->
                 <td>
                   <div class="btn-group" role="group" aria-label="optionsmenu">
-                    <button  disabled type="button" class="btn btn-sm btn-outline-secondary" href="#" data-toggle="modal"
+                    <button type="button" class="btn btn-sm btn-outline-secondary" href="#" data-toggle="modal"
                       data-target="#infoparmodal" (click)="showParInfo(par.idpars)"><i class="fa fa-search"
                         aria-hidden="true"></i>
                       PAR</button>
-                    <button disabled type="button" class="btn btn-sm btn-outline-secondary"><i class="fa fa-search"
+                    <button type="button" class="btn btn-sm btn-outline-secondary" href="#" data-toggle="modal"
+                      data-target="#informemodal" (click)="showRmeInfo(par.idpars)"><i class="fa fa-search"
                         aria-hidden="true"></i>
                       RME</button>
                   </div>
@@ -99,7 +101,7 @@
             </tbody>
 
           </table>
-          
+
         </div>
       </div>
     </div>
@@ -174,38 +176,36 @@
 
 
 <!-- INFO PAR MODAL -->
-<!-- <div class="modal fade center" id="infoparmodal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+<div class="modal fade center" id="infoparmodal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
 
     <div class="modal-content">
-      
+
       <div class="modal-header">
         <h4 class="modal-title">PAR info</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" *ngIf="parinfo">
         <div class="container-fluid">
 
 
           <div class="card">
             <div class="card-header">
               <h5 class="card-title">ID: {{parinfo.idpars}}</h5>
-              <p class="card-text">Status: {{parinfo.status}}</p>
+              <p class="card-text">Description: {{parinfo.description}}</p>
+              <p class="card-text">Requested Quantity: {{parinfo.qtd}}</p>
+              <p class="card-text">Material: {{parinfo.material.name}}</p>
             </div>
             <div class="card-body">
-              
               <table class="table table-striped" [mfData]="parinfoitems" #mf="mfDataTable" [mfRowsOnPage]="5">
                 <thead>
                   <tr>
                     <th>
-                      <mfDefaultSorter by="description">Name</mfDefaultSorter>
+                      <mfDefaultSorter by="description">Description</mfDefaultSorter>
                     </th>
                     <th>
-                      <mfDefaultSorter by="itemqtd">Qtd</mfDefaultSorter>
-                    </th>
-                    <th>
-                      <mfDefaultSorter by="name">Type</mfDefaultSorter>
+                      <mfDefaultSorter by="link">Link</mfDefaultSorter>
                     </th>
                   </tr>
                 </thead>
@@ -214,16 +214,11 @@
 
 
                     <td>{{ item.description }}</td>
-                    <td>{{ item.itemqtd }}</td>
-                    <td>{{ item.name }}</td>
-
-
-
-                  </tr>
+                    <td><a href="{{ item.link }}">Link</a></td>
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colspan=3>
+                    <td colspan=2>
                       <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25]"></mfBootstrapPaginator>
                     </td>
                   </tr>
@@ -234,15 +229,94 @@
 
         </div>
       </div>
-      
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
 
     </div>
   </div>
-</div> -->
+</div>
 <!-- INFO PAR MODAL END -->
+
+<!-- INFO RME MODAL START -->
+<div class="modal fade center" id="informemodal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4 class="modal-title">RME info</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <div class="modal-body" *ngIf="parinfo">
+        <div class="container-fluid">
+
+
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">ID: {{parinfo.idpars}}</h5>
+              <p class="card-text">Description: {{parinfo.description}}</p>
+              <p class="card-text">Requested Quantity: {{parinfo.qtd}}</p>
+              <p class="card-text">Received so far: {{parinfo.rmereceived}}</p>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped" [mfData]="rmeinfoitems" #mf="mfDataTable" [mfRowsOnPage]="5">
+                <thead>
+                  <tr>
+                    <th>
+                      <mfDefaultSorter by="idrmes">ID</mfDefaultSorter>
+                    </th>
+                    <th>
+                      <mfDefaultSorter by="status">Status</mfDefaultSorter>
+                    </th>
+                    <th>
+                      <mfDefaultSorter by="statusdescription">Comment</mfDefaultSorter>
+                    </th>
+                    <th>
+                      <mfDefaultSorter by="qtd">Qtd</mfDefaultSorter>
+                    </th>
+                    <th>
+                      <mfDefaultSorter by="createdat">Requested at</mfDefaultSorter>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of mf.data">
+
+                    <td>{{ item.idrmes }}</td>
+                    <td *ngIf="+item.status == 1 && item.status != null"><span
+                        class="badge badge-success">Approved</span></td>
+                    <td *ngIf="+item.status == 0 && item.status != null"><span
+                        class="badge badge-danger">Rejected</span></td>
+                    <td *ngIf="item.status == null"><span class="badge badge-warning">Pending</span></td>
+                    <td>{{ item.statusdescription }}</td>
+                    <td>{{ item.qtd }}</td>
+                    <td>{{ item.createdat }}</td>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan=5>
+                      <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25]"></mfBootstrapPaginator>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- INFO RME MODAL END -->
 
 
 <!-- APPROVE RME MODAL END -->

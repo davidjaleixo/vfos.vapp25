@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectService, ParsService, RmesService, MaterialReceivedService } from 'src/app/_services';
+import { ProjectService, ParsService, RmesService, MaterialReceivedService, ParsLinksService, MaterialService } from 'src/app/_services';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
@@ -19,6 +19,7 @@ export class ProjectdashboardComponent implements OnInit {
   rmestobe: any;
   parinfo: any;
   parinfoitems: any;
+  rmeinfoitems: any;
   approvedrmes: any;
   parswithrmes: any;
   approvalrme: any;
@@ -27,7 +28,9 @@ export class ProjectdashboardComponent implements OnInit {
     private router: ActivatedRoute,
     private parsservice: ParsService,
     private rmesservice: RmesService,
-    private alert: ToastrService
+    private alert: ToastrService,
+    private parslinksservice: ParsLinksService,
+    private materialsservice: MaterialService
   ) { }
 
   getPars() {
@@ -151,34 +154,67 @@ export class ProjectdashboardComponent implements OnInit {
     // })
   }
   showParInfo(parid) {
-    this.parinfoitems = [];
+    
+    
     this.pars.forEach(eachPar => {
-      this.mats.forEach(eachItem => {
-        if (eachPar.idpars == parid && eachItem.idpars == parid) {
-          this.parinfo = eachPar;
-          //check if this item was already inserted
-          let found = false;
-          if (this.parinfoitems.length == 0) {
-            this.parinfoitems.push(eachItem)
-          } else {
-            this.parinfoitems.forEach((eachItemInfo, idx, array) => {
-              if (eachItemInfo.idlist == eachItem.idlist) {
-                found = true;
-              }
-              if (idx == array.length - 1 && !found) {
-                this.parinfoitems.push(eachItem)
-                found = false;
-              }
-            })
-          }
-
-
-        }
-      })
+      if(eachPar.idpars == parid){
+        this.parinfo = eachPar
+        console.log("PARINFO: ", this.parinfo);
+        this.parslinksservice.getByParId(parid).subscribe(links => {
+          console.log("links for the par: ", links);
+          this.parinfoitems = links
+        })
+        this.materialsservice.getById(this.parinfo.idmaterials).subscribe(mat => {
+          
+          this.parinfo.material = mat
+          console.log("material for this par:",this.parinfo.material);
+        })
+      }
     })
+    
+    // this.pars.forEach(eachPar => {
+    //   this.mats.forEach(eachItem => {
+    //     if (eachPar.idpars == parid && eachItem.idpars == parid) {
+    //       this.parinfo = eachPar;
+    //       //check if this item was already inserted
+    //       let found = false;
+    //       if (this.parinfoitems.length == 0) {
+    //         this.parinfoitems.push(eachItem)
+    //       } else {
+    //         this.parinfoitems.forEach((eachItemInfo, idx, array) => {
+    //           if (eachItemInfo.idlist == eachItem.idlist) {
+    //             found = true;
+    //           }
+    //           if (idx == array.length - 1 && !found) {
+    //             this.parinfoitems.push(eachItem)
+    //             found = false;
+    //           }
+    //         })
+    //       }
+
+
+    //     }
+    //   })
+    // })
   }
   showRmeInfo(parid) {
-
+    this.pars.forEach(eachPar => {
+      if(eachPar.idpars == parid){
+        this.parinfo = eachPar
+        this.parinfo.rmereceived = 0
+        console.log("PARINFO: ", this.parinfo);
+        this.rmesservice.getByPar(parid).subscribe(rmeslist => {
+          console.log("RME LIST: ", rmeslist)
+          this.rmeinfoitems = rmeslist
+          this.rmeinfoitems.forEach(eachRME => {
+            if (+eachRME.status == 1){
+              this.parinfo.rmereceived = this.parinfo.rmereceived + +eachRME.qtd 
+            }
+          })
+        })
+      }
+    })
+    
   }
 
 }

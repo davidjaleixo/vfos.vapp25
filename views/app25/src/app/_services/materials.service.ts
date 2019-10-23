@@ -18,4 +18,10 @@ export class MaterialService {
     delete(materialId: String) {
         return this.http.delete(environment.apiUrl + '/materials?id=' + materialId)
     }
+    getById(materialId: String) {
+        return this.http.get(environment.apiUrl + '/materials?id=' + materialId)
+    }
+    getLinksById(materialId: String){
+        return this.http.get(environment.apiUrl + '/materialslinks?material=' + materialId)
+    }
 }
