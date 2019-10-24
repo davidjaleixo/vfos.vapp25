@@ -225,6 +225,9 @@ export class ProjectdetailsComponent implements OnInit {
         this.showquantityalert = false;
         this.submitted = false;
         this.newRme.reset();
+        //clear rest of the form
+        this.showpar = { idpars: 0, description: "", qtd: 0 }
+        this.showmaterialsspecs = {name:''}
       })
     }
   }

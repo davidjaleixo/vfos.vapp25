@@ -191,11 +191,11 @@
 
 
           <div class="card">
-            <div class="card-header">
-              <h5 class="card-title">ID: {{parinfo.idpars}}</h5>
-              <p class="card-text">Description: {{parinfo.description}}</p>
-              <p class="card-text">Requested Quantity: {{parinfo.qtd}}</p>
-              <p class="card-text">Material: {{parinfo.material.name}}</p>
+            <div class="card-header" >
+              <h5 *ngIf="parinfo.idpars" class="card-title">ID: {{parinfo.idpars}}</h5>
+              <p *ngIf="parinfo.description" class="card-text">Description: {{parinfo.description}}</p>
+              <p *ngIf="parinfo.qtd" class="card-text">Requested Quantity: {{parinfo.qtd}}</p>
+              <p  *ngIf="parinfo.material" class="card-text">Material: {{parinfo.material.name}}</p>
             </div>
             <div class="card-body">
               <table class="table table-striped" [mfData]="parinfoitems" #mf="mfDataTable" [mfRowsOnPage]="5">
