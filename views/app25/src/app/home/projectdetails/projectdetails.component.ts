@@ -228,6 +228,8 @@ export class ProjectdetailsComponent implements OnInit {
         //clear rest of the form
         this.showpar = { idpars: 0, description: "", qtd: 0 }
         this.showmaterialsspecs = {name:''}
+        this.approvedrmes = 0;
+        this.approvedrmesqtd = 0;
       })
     }
   }
